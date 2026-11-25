@@ -13,6 +13,9 @@ Interaktives Board für die Planung von **Horizont:8** am Rosa-Luxemburg-Gymnasi
 
 Alle Inhalte stehen in `assets/data.js` (Cluster → Kacheln). Logik für Notizen, Punkte, Beschlüsse und Export steht in `assets/app.js`, die gemeinsamen Komponenten in `assets/base.css`.
 
+## Lerntagebuch für Projektteilnehmende
+`lerntagebuch.html` ist das eJournal für die Projektphase 14.–25.06.2027. Es basiert auf dem Laborjournal aus dem Chemie-Repo: Speicherung in IndexedDB, Fotos, Export als .html/.zip, Endfassung mit Prüfsumme, PDF. Neu sind die Karte „＋ Heutiger Lerntag“ (Lernort, Zeit, drei kurze Fragen, Stimmung, Foto als Beleg), die Wochenleiste der zehn Projekttage und die Anzeige der Lernort-Pflicht (mind. Futurium oder Humboldt Forum). Direktlink für einen QR-Code: `lerntagebuch.html?heute`.
+
 ## Notizen & Gesprächsergebnis
 - Notizen, Punkte, Häkchen, Beschlüsse und eigene Kacheln werden im **localStorage des eigenen Browsers** gespeichert und gelten für alle drei Layouts.
 - **⬇ HTML** und **⎙ PDF** erzeugen das Gesprächsergebnis (Oberthema, Meinungsbild, Beschlüsse, To-dos, alle Notizen). Am besten in `02_Gespraechsergebnisse/` ablegen; der Ordner ist bewusst nicht im Repo.

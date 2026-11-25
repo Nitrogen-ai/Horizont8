@@ -124,6 +124,9 @@ window.H8_DATA = {
           bullets: ["Gruppen klassenübergreifend, 2–4 Lernende, ca. 18 Gruppen", "Lernende dürfen allein zu Lernorten (Elternbrief Anfang 2027)", "Alle Fachlehrpersonen der Klassen betreuen; die Orga fragt sie ab", "Anwesenheit täglich, Kontrolle durch alle vier", "Thema legen Orga + KL fest – ohne die Klassen", "Produkte müssen sicherbar und dokumentierbar sein", "Schulverein-Zuschuss pro Gruppe, ÖPNV kostenlos"] },
         { id: "org-kl", kicker: "Rolle der KL", titel: "Was die Klassenleitungen (vorerst) tun",
           bullets: ["Information der Klassen und Eltern, inkl. Elternbrief", "Detailplanung Kick-off folgt später", "Möglichst nicht für 5. PK eingeplant (Orga klärt mit der Oberstufenkoordination)"] },
+        { id: "org-tagebuch", kicker: "Für die Projektteilnehmenden", titel: "Lerntagebuch (eJournal)",
+          text: "Jeden Lerntag in ca. 3 Minuten dokumentieren: Lernort, Zeit, was gemacht und gelernt, nächster Schritt, Foto als Beleg. Zeigt, ob der Pflicht-Lernort (Futurium oder Humboldt Forum) schon besucht ist. Daten bleiben im Browser der Lernenden; täglicher Export als .html an die betreuende Lehrperson, am Ende Endfassung + PDF.",
+          links: [{ t: "Lerntagebuch öffnen", u: "lerntagebuch.html" }, { t: "Direkt: heutiger Lerntag", u: "lerntagebuch.html?heute" }] },
         { id: "org-roadmap", kicker: "Roadmap", titel: "Nächste Meilensteine",
           timeline: [
             ["bis Mitte Dez.", "Thema festlegen ✔ heute?"],

@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lerntagebuch · Horizont:8</title>
+<style>
+  :root {
+    --ink: #1d2327;
+    --muted: #6b7378;
+    --line: #d9dee2;
+    --paper: #ffffff;
+    --bg: #f7f3ea;
+    --accent: #c2410c;
+    --accent-soft: #fdeee6;
+    --warn: #b5482e;
+    --ok: #2e7d4f;
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; color: var(--ink); background: var(--bg); font-size: 16px; line-height: 1.5; }
+  button, select, input { font: inherit; }
+  header.app { position: sticky; top: 0; z-index: 20; background: var(--paper); border-bottom: 1px solid var(--line); }
+  .bar { max-width: 980px; margin: 0 auto; padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .brand { font-weight: 700; margin-right: auto; display: flex; gap: 8px; align-items: baseline; }
+  .brand small { font-weight: 400; color: var(--muted); }
+  .btn { border: 1px solid var(--line); background: var(--paper); color: var(--ink); border-radius: 6px; padding: 6px 11px; cursor: pointer; white-space: nowrap; }
+  .btn:hover { border-color: var(--accent); }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn.small { padding: 2px 8px; font-size: 13px; }
+  .btn.danger { color: var(--warn); }
+  .status { font-size: 13px; color: var(--muted); }
+  main { max-width: 980px; margin: 0 auto; padding: 18px 16px 120px; }
+  .sheet { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 26px; }
+  .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px 16px; margin-bottom: 14px; }
+  .meta label { display: flex; flex-direction: column; font-size: 12px; color: var(--muted); gap: 2px; }
+  .meta input, .meta select { border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; font-size: 15px; color: var(--ink); background: #fff; }
+  .meta .wide { grid-column: 1 / -1; }
+  .meta .wide input { font-size: 20px; font-weight: 600; }
+  .badge { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); }
+  .badge.final { background: #e5f3ea; color: var(--ok); }
+  .block { position: relative; border: 1px solid transparent; border-radius: 6px; padding: 4px 6px; margin: 2px -6px; }
+  .block:hover, .block:focus-within { border-color: var(--line); }
+  .tools { position: absolute; right: 4px; top: -13px; display: none; gap: 3px; background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 2px; }
+  .block:hover .tools, .block:focus-within .tools { display: flex; }
+  .tools button { border: 0; background: none; cursor: pointer; padding: 1px 6px; font-size: 14px; color: var(--muted); }
+  .tools button:hover { color: var(--ink); }
+  .h { font-size: 19px; font-weight: 700; color: var(--accent); border-bottom: 1px solid var(--accent-soft); padding: 4px 0 2px; margin-top: 10px; outline: none; }
+  .tplinfo { display: flex; align-items: center; gap: 10px; text-decoration: none; background: #efecf6; color: #5b3a8c; border: 1px solid #d9d2ea; border-radius: 8px; padding: 10px 14px; margin: 0 0 12px; font-weight: 600; }
+  .tplinfo:hover { background: #e6e0f3; }
+  .tplinfo small { display: block; font-weight: 400; color: #52514e; }
+  .tplinfo[hidden] { display: none; }
+  .h.folie { background: var(--accent); color: #fff; border-radius: 6px; padding: 6px 12px; margin-top: 22px; font-size: 17px; letter-spacing: .02em; }
+  .hint { font-size: 13px; color: var(--muted); background: #fafbfc; border-left: 3px solid var(--accent-soft); padding: 4px 10px; margin: 4px 0 6px; }
+  .hint summary { cursor: pointer; }
+  .rt { min-height: 1.6em; outline: none; padding: 2px 0; }
+  .rt:empty::before { content: attr(data-ph); color: #a7aeb3; }
+  .rt ul, .rt ol { margin: 4px 0; padding-left: 24px; }
+  figure { margin: 6px 0; text-align: center; }
+  figure img { max-width: 100%; max-height: 70vh; border: 1px solid var(--line); border-radius: 4px; background: #fff; }
+  figure.svg img { min-width: 200px; }
+  figcaption { font-size: 14px; color: var(--muted); outline: none; min-height: 1.4em; }
+  figcaption:empty::before { content: "Bildunterschrift (z. B. Abb. 1: Probe III nach 5 min im Wasserbad)"; color: #b6bcc0; }
+  table.eln { border-collapse: collapse; width: 100%; margin: 6px 0; font-size: 15px; }
+  table.eln td { border: 1px solid #c6cdd2; padding: 4px 6px; vertical-align: top; min-width: 60px; outline: none; }
+  table.eln tr:first-child td { background: var(--accent-soft); font-weight: 600; }
+  .tablebtns { display: flex; gap: 4px; flex-wrap: wrap; }
+  .ins { display: flex; justify-content: center; height: 14px; margin: 0; position: relative; }
+  .ins button { opacity: 0; transition: opacity .15s; border: 1px dashed var(--accent); color: var(--accent); background: var(--paper); border-radius: 10px; font-size: 12px; padding: 0 10px; cursor: pointer; line-height: 16px; }
+  .ins:hover button, .ins button:focus, body.touch .ins button { opacity: 1; }
+  .ins.drop button { opacity: 1; background: var(--accent-soft); }
+  .menu { position: absolute; z-index: 30; top: 16px; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 24px rgba(0,0,0,.12); padding: 6px; display: grid; gap: 2px; min-width: 230px; }
+  .menu button { text-align: left; border: 0; background: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+  .menu button:hover { background: var(--accent-soft); }
+  .fmt { position: sticky; top: 60px; z-index: 10; display: flex; flex-wrap: wrap; gap: 4px; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 4px; margin-bottom: 12px; }
+  .fmt button { border: 1px solid transparent; background: none; border-radius: 5px; padding: 2px 9px; cursor: pointer; min-width: 32px; }
+  .fmt button:hover { border-color: var(--line); }
+  .fmt .sep { width: 1px; background: var(--line); margin: 2px 4px; }
+  dialog { border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; max-width: 560px; width: calc(100% - 32px); }
+  dialog::backdrop { background: rgba(20,30,40,.35); }
+  dialog h2 { margin: 0 0 10px; font-size: 18px; }
+  .list { display: grid; gap: 6px; margin: 10px 0; max-height: 50vh; overflow: auto; }
+  .list .item { display: flex; gap: 8px; align-items: center; border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; }
+  .list .item div { flex: 1; min-width: 0; }
+  .list .item small { color: var(--muted); display: block; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; margin-top: 12px; }
+  .note { font-size: 13px; color: var(--muted); }
+  .dropzone-all { position: fixed; inset: 0; background: rgba(42,122,184,.12); border: 3px dashed var(--accent); display: none; z-index: 50; pointer-events: none; }
+  body.dragging .dropzone-all { display: block; }
+  #toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 60; max-width: 90vw; }
+  #toast.show { opacity: 1; }
+  .final-lock .rt, .final-lock .h, .final-lock figcaption, .final-lock td { pointer-events: none; }
+  @media (max-width: 600px) { .sheet { padding: 14px; } .brand small { display: none; } }
+  /* Horizont:8 · Lerntage */
+  .btn.today { background: #1c2430; color: #fff; border-color: #1c2430; font-weight: 700; }
+  .btn.today:hover { background: var(--accent); border-color: var(--accent); }
+  .overview { display: grid; gap: 10px; margin: 0 0 16px; }
+  .pflicht { display: flex; gap: 10px; align-items: center; border-radius: 10px; padding: 9px 14px; font-size: 15px; }
+  .pflicht.offen { background: #fff4e5; border: 1px solid #f3c27a; }
+  .pflicht.ok { background: #e5f3ea; border: 1px solid #a6d4b6; }
+  .pflicht b { white-space: nowrap; }
+  .week { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }
+  .week .wd { border: 1px dashed var(--line); border-radius: 8px; text-align: center; padding: 4px 2px; font-size: 12px; color: var(--muted); cursor: pointer; background: #fff; line-height: 1.25; }
+  .week .wd b { display: block; font-size: 13px; color: var(--ink); }
+  .week .wd.on { border: 1.5px solid var(--accent); background: var(--accent-soft); color: var(--ink); }
+  .week .wd.ext { border-color: #2e7d4f; background: #e5f3ea; }
+  .week .wd.today { box-shadow: 0 0 0 2px #1c2430; }
+  .week .gap { grid-column: span 10; height: 0; }
+  .day { border: 1px solid var(--line); border-left: 6px solid var(--accent); border-radius: 10px; padding: 12px 14px 10px; margin: 10px 0 4px; background: #fffdf8; }
+  .day.ext { border-left-color: #2e7d4f; }
+  .day .dhead { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: end; margin-bottom: 8px; }
+  .day .dhead label { display: flex; flex-direction: column; font-size: 12px; color: var(--muted); gap: 2px; }
+  .day input, .day select, .day textarea { font: inherit; font-size: 15px; border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; background: #fff; color: var(--ink); }
+  .day .dhead label[hidden] { display: none; }
+  .day .dtitle { font-weight: 800; font-size: 17px; color: var(--accent); flex-basis: 100%; }
+  .day.ext .dtitle { color: #2e7d4f; }
+  .day .q { display: block; font-size: 13px; color: var(--muted); margin: 6px 0 2px; font-weight: 600; }
+  .day textarea { width: 100%; resize: vertical; min-height: 44px; }
+  .day .mood { display: flex; gap: 6px; align-items: center; margin-top: 8px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+  .day .mood button { border: 1.5px solid var(--line); background: #fff; border-radius: 20px; padding: 2px 10px; font-size: 18px; cursor: pointer; }
+  .day .mood button.on { border-color: var(--accent); background: var(--accent-soft); }
+  .day .mood .spacer { flex: 1; }
+  .day[disabled-lock] input, .day[disabled-lock] select, .day[disabled-lock] textarea { pointer-events: none; }
+  @media (max-width: 600px) { .week { grid-template-columns: repeat(5, 1fr); } .week .gap { display: none; } }
+  #printHead { display: none; }
+  @page { margin: 15mm 14mm 16mm; }
+  @media print {
+    header.app, .fmt, .ins, .tools, .hint, .tplinfo, .tablebtns, #toast, .meta, main > .note, .week, .day .mood button:not(.on), .day .addphoto { display: none !important; }
+    .day { break-inside: avoid; } .day input, .day select, .day textarea { border: 0; padding: 0; background: none; } .day textarea { min-height: 0; }
+    #printHead { display: block; border-bottom: 2px solid var(--accent); padding-bottom: 6px; margin-bottom: 10px; }
+    #printHead h1 { font-size: 22px; margin: 0 0 2px; color: var(--accent); }
+    #printHead div { font-size: 13px; color: #444; }
+    .rt:empty::before, figcaption:empty::before { content: none; }
+    .rt:empty, figcaption:empty { display: none; }
+    .h { break-after: avoid; page-break-after: avoid; }
+    .block:has(> .h) { break-after: avoid; page-break-after: avoid; }
+    figure, figure img { break-inside: avoid; page-break-inside: avoid; }
+    figure img { display: block; margin: 0 auto; }
+    table.eln { break-inside: avoid; page-break-inside: avoid; } table.eln tr { break-inside: avoid; }
+    figure img { max-height: 110mm; max-width: 100%; width: auto; }
+    body { background: #fff; }
+    main { padding: 0; }
+    .sheet { border: 0; padding: 0; }
+    .block { border: 0 !important; }
+    figure { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<header class="app">
+  <div class="bar">
+    <div class="brand">🧭 Lerntagebuch <small>Horizont:8 · Zukunfts:Bilder</small></div>
+    <span class="status" id="status">–</span>
+    <button class="btn today" id="bToday" title="Eintrag für heute anlegen">＋ Heutiger Lerntag</button>
+    <button class="btn" id="bNew" title="Neues Tagebuch anlegen">Neu</button>
+    <button class="btn" id="bOpen" title="Gespeicherte Tagebücher in diesem Browser">Meine Tagebücher</button>
+    <button class="btn" id="bImport" title=".zip oder .html eines Lerntagebuchs öffnen">Importieren</button>
+    <button class="btn primary" id="bExport">Sichern / Exportieren</button>
+  </div>
+</header>
+
+<main>
+  <div class="fmt" id="fmt" aria-label="Textformat">
+    <button data-cmd="bold" title="fett"><b>F</b></button>
+    <button data-cmd="italic" title="kursiv"><i>K</i></button>
+    <button data-cmd="underline" title="unterstrichen"><u>U</u></button>
+    <button data-cmd="subscript" title="tiefgestellt (H₂O)">x<sub>2</sub></button>
+    <button data-cmd="superscript" title="hochgestellt (Ladung)">x<sup>2</sup></button>
+    <span class="sep"></span>
+    <button data-cmd="insertUnorderedList" title="Aufzählung">• Liste</button>
+    <button data-cmd="insertOrderedList" title="Nummerierung">1. Liste</button>
+    <span class="sep"></span>
+    <button data-ins="→" title="Pfeil">→</button>
+    <button data-ins="✓ " title="erledigt">✓</button>
+    <button data-ins="💡 " title="Idee">💡</button>
+    <button data-ins="❓ " title="offene Frage">❓</button>
+    <button data-ins="📍 " title="Ort">📍</button>
+    <button data-ins="🔗 " title="Quelle/Link">🔗</button>
+  </div>
+
+  <div class="sheet" id="sheet">
+    <div id="printHead"></div>
+    <div class="meta">
+      <label class="wide">Unser Projekt (Arbeitstitel)<input id="mTitel" placeholder="z. B. Wie bewegen wir uns 2050 durch Pankow?"></label>
+      <label>Mein Name<input id="mName" autocomplete="name"></label>
+      <label>Meine Gruppe (weitere Namen)<input id="mTeam"></label>
+      <label>Projektstart<input id="mDatum" type="date"></label>
+      <label>Klasse · betreuende Lehrperson<input id="mKurs" placeholder="8.4 · Frau/Herr …"></label>
+      <label>Status<span><span class="badge" id="mStatus">Entwurf</span></span></label>
+    </div>
+    <a id="tplInfo" class="tplinfo" hidden target="_blank" rel="noopener"></a>
+    <div class="overview" id="overview"></div>
+    <div id="blocks"></div>
+  </div>
+  <p class="note"><b>So geht's:</b> Jeden Projekttag einmal „＋ Heutiger Lerntag“ antippen, Ort und Zeit wählen, drei kurze Sätze schreiben, fertig (ca. 3 Minuten). Am Lernort ein Foto als Beleg machen (Eingang, Ausstellung, Eintrittskarte – keine fremden Personen). Alles wird automatisch in diesem Browser gespeichert. Das ist kein Backup: Sichere am Ende jedes Tages über „Sichern / Exportieren“ (Zwischenstand als .html) – das ist auch die Datei für deine betreuende Lehrperson.</p>
+</main>
+
+<div class="dropzone-all"></div>
+<div id="toast"></div>
+<input type="file" id="fileImg" accept="image/*,.svg" multiple hidden>
+<input type="file" id="fileCam" accept="image/*" capture="environment" hidden>
+<input type="file" id="fileImport" accept=".zip,.html,.htm,.json,application/zip" hidden>
+
+<dialog id="dNew">
+  <h2>Neues Tagebuch</h2>
+  <p class="note">Das aktuelle Tagebuch bleibt unter „Meine Tagebücher“ gespeichert. Für Horizont:8 reicht ein Tagebuch für die ganzen zwei Wochen.</p>
+  <div class="list" id="tplList"></div>
+  <div class="row"><button class="btn" data-close>Abbrechen</button></div>
+</dialog>
+
+<dialog id="dOpen">
+  <h2>Meine Tagebücher (in diesem Browser)</h2>
+  <div class="list" id="docList"></div>
+  <p class="note">Gespeichert nur auf diesem Gerät und in diesem Browser. Beim Löschen der Websitedaten geht alles verloren, deshalb regelmäßig exportieren.</p>
+  <div class="row"><button class="btn" data-close>Schließen</button></div>
+</dialog>
+
+<dialog id="dExport">
+  <h2>Sichern und exportieren</h2>
+  <div class="list">
+    <p class="note" style="margin:0"><b>Jeden Tag:</b> Zwischenstand als .html sichern. <b>Am Ende der Projektphase:</b> 1 Endfassung · 2 ZIP · 3 PDF.</p>
+    <div class="item"><div><b>Zwischenstand als .html</b><small>Eine Datei mit allen Texten und Bildern. Lässt sich in jedem Browser lesen und hier wieder importieren.</small></div><button class="btn" id="xHtml">Herunterladen</button></div>
+    <div class="item"><div><b>1 · Endfassung als .html</b><small>Markiert das Tagebuch als Endfassung mit Zeitstempel und Prüfsumme und lädt es herunter. Danach ist es schreibgeschützt (entsperren möglich).</small></div><button class="btn primary" id="xFinal">Endfassung</button></div>
+    <div class="item"><div><b>2 · Paket als .zip</b><small>lerntagebuch.html + Fotos in Originalgröße im Ordner „bilder“ + lerntagebuch.json. Zum Archivieren, Weitergeben und Wiederherstellen.</small></div><button class="btn" id="xZip">Herunterladen</button></div>
+    <div class="item"><div><b>3 · PDF für die Abgabe</b><small>Öffnet den Druckdialog; dort „Als PDF sichern“ wählen. Das PDF enthält Kopf mit Name und Gruppe, alle Lerntage, Texte und Fotos.</small></div><button class="btn" id="xPrint">PDF / Drucken</button></div>
+  </div>
+  <div class="row"><button class="btn danger" id="xUnlock" hidden>Endfassung entsperren</button><button class="btn" data-close>Schließen</button></div>
+</dialog>
+
+<script>
+"use strict";
+/* ===================== Grundlagen ===================== */
+const FORMAT = "eln-horizont8";
+const VERSION = 1;
+const $ = (s, r = document) => r.querySelector(s);
+const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const today = () => new Date().toISOString().slice(0, 10);
+function toast(msg, ms = 2600) { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove("show"), ms); }
+if (matchMedia("(hover: none)").matches) document.body.classList.add("touch");
+
+/* Erlaubtes HTML im Fließtext: nur einfache Auszeichnung, keine Attribute */
+const ALLOWED = new Set(["B", "STRONG", "I", "EM", "U", "SUB", "SUP", "BR", "P", "DIV", "UL", "OL", "LI"]);
+function sanitize(html) {
+  const tpl = document.createElement("template");
+  tpl.innerHTML = String(html || "");
+  const walk = (node, out) => {
+    for (const n of [...node.childNodes]) {
+      if (n.nodeType === 3) out.appendChild(document.createTextNode(n.textContent));
+      else if (n.nodeType === 1) {
+        if (["SCRIPT", "STYLE", "IFRAME", "OBJECT", "EMBED", "TEMPLATE"].includes(n.tagName)) continue;
+        if (ALLOWED.has(n.tagName)) { const e = document.createElement(n.tagName.toLowerCase()); walk(n, e); out.appendChild(e); }
+        else walk(n, out);
+      }
+    }
+  };
+  const box = document.createElement("div");
+  walk(tpl.content, box);
+  return box.innerHTML;
+}
+
+/* ===================== Datenhaltung (IndexedDB) ===================== */
+// docs: {id, doc}  ·  images: {key: docId/imgId, docId, mime, name, buf}
+const DB = {
+  db: null,
+  open() {
+    return new Promise((res, rej) => {
+      const r = indexedDB.open("eln-horizont8", 1);
+      r.onupgradeneeded = () => {
+        const d = r.result;
+        d.createObjectStore("docs", { keyPath: "id" });
+        const im = d.createObjectStore("images", { keyPath: "key" });
+        im.createIndex("docId", "docId");
+      };
+      r.onsuccess = () => { DB.db = r.result; res(); };
+      r.onerror = () => rej(r.error);
+    });
+  },
+  tx(stores, mode, fn) {
+    return new Promise((res, rej) => {
+      const t = DB.db.transaction(stores, mode);
+      let out;
+      t.oncomplete = () => res(out);
+      t.onerror = t.onabort = () => rej(t.error);
+      out = fn(t);
+    });
+  },
+  req(r) { return new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
+  async putDoc(doc) { await DB.tx(["docs"], "readwrite", t => t.objectStore("docs").put({ id: doc.id, doc })); },
+  async getDoc(id) { const t = DB.db.transaction("docs"); const r = await DB.req(t.objectStore("docs").get(id)); return r && r.doc; },
+  async allDocs() { const t = DB.db.transaction("docs"); return (await DB.req(t.objectStore("docs").getAll())).map(r => r.doc); },
+  async putImg(docId, imgId, mime, name, buf, orig) { await DB.tx(["images"], "readwrite", t => t.objectStore("images").put({ key: docId + "/" + imgId, docId, mime, name, buf, orig })); },
+  async getImg(docId, imgId) { const t = DB.db.transaction("images"); return DB.req(t.objectStore("images").get(docId + "/" + imgId)); },
+  async delDoc(id) {
+    await DB.tx(["docs", "images"], "readwrite", t => {
+      t.objectStore("docs").delete(id);
+      const idx = t.objectStore("images").index("docId");
+      idx.openKeyCursor(IDBKeyRange.only(id)).onsuccess = e => { const c = e.target.result; if (c) { t.objectStore("images").delete(c.primaryKey); c.continue(); } };
+    });
+  },
+};
+// Fallback ohne IndexedDB (z. B. private Fenster): nur im Speicher
+const MEM = { docs: new Map(), imgs: new Map() };
+let useMem = false;
+
+/* ===================== Zustand ===================== */
+let doc = null;            // aktuelles Protokoll
+const imgCache = new Map(); // imgId -> {mime, name, buf, url, orig?: {mime, name, buf}}
+let saveTimer = null;
+
+function newDoc(tpl) {
+  return {
+    format: FORMAT, version: VERSION, id: uid(),
+    meta: { titel: tpl.titel || "", name: "", team: "", datum: today(), kurs: "" },
+    status: "entwurf", created: new Date().toISOString(), modified: new Date().toISOString(),
+    final: null, tpl: tpl.key || "",
+    blocks: tpl.blocks.map(b => ({ id: uid(), ...structuredClone(b) })),
+  };
+}
+
+/* ===================== Vorlagen ===================== */
+const H = (text, hint) => ({ type: "h", text, hint });
+const T = (ph, html = "") => ({ type: "text", html, ph });
+const TAB = rows => ({ type: "table", rows });
+/* Horizont:8 · Lerntage: Projektphase 14.–25.06.2027, Lernorte, Pflicht (mind. Futurium ODER Humboldt Forum) */
+const PROJEKTTAGE = ["2027-06-14", "2027-06-15", "2027-06-16", "2027-06-17", "2027-06-18", "2027-06-21", "2027-06-22", "2027-06-23", "2027-06-24", "2027-06-25"];
+const ORTE = [
+  { v: "Futurium", ext: true, pflicht: true },
+  { v: "Humboldt Forum", ext: true, pflicht: true },
+  { v: "Medienzentrum Pankow", ext: true },
+  { v: "Bibliothek", ext: true },
+  { v: "Anderer außerschulischer Ort", ext: true, frei: true },
+  { v: "Schule (RLG)" },
+  { v: "Zuhause / online" },
+];
+const ortInfo = v => ORTE.find(o => o.v === v) || {};
+const MOODS = ["😟", "😐", "🙂", "🤩"];
+const wtag = iso => { try { return new Date(iso + "T12:00").toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit" }); } catch (e) { return iso; } };
+const DAY = () => ({ type: "day", datum: today(), ort: "", ortFrei: "", von: "", bis: "", was: "", gelernt: "", next: "", mood: 0 });
+const LERNTAGEBUCH = [
+  H("Unsere Projektidee", "Worum geht es? Welches Zukunftsbild wollt ihr untersuchen oder gestalten? Welches Lernprodukt soll am Ende stehen (Video, Podcast, Modell, Website …)?"),
+  T("Unsere Leitfrage: … · Unser Lernprodukt: …"),
+  H("Lerntage", "Jeden Projekttag ein Eintrag über „＋ Heutiger Lerntag“. Pflicht: mindestens ein Besuch im Futurium oder im Humboldt Forum. Wärmstens empfohlen: das Medienzentrum Pankow zum Gestalten."),
+  H("Rückblick am Ende", "Was hat gut geklappt? Was würdet ihr beim nächsten Mal anders machen? Was nehmt ihr für euch mit?"),
+  T("Gut geklappt hat … · Beim nächsten Mal … · Mitnehmen werde ich …"),
+];
+const TEMPLATES = [
+  { key: "horizont8", name: "Lerntagebuch Horizont:8", desc: "Projektidee, ein Eintrag pro Lerntag, Rückblick", titel: "", blocks: LERNTAGEBUCH,
+    info: { href: "kompass.html", text: "Horizont:8 · Zukunfts:Bilder – Überblick, Lernorte und Ideen", sub: "Öffnet in neuem Tab: Oberthema, Futurium, Humboldt Forum, Medienzentrum, Präsentationsformen." } },
+  { key: "leer", name: "Leeres Tagebuch", desc: "Nur ein Textfeld", titel: "", blocks: [T("Hier schreiben …")] },
+];
+
+/* ===================== Bilder ===================== */
+function fileToBuf(file) { return file.arrayBuffer(); }
+function blobUrl(rec) { if (!rec.url) rec.url = URL.createObjectURL(new Blob([rec.buf], { type: rec.mime })); return rec.url; }
+async function loadImg(imgId) {
+  if (imgCache.has(imgId)) return imgCache.get(imgId);
+  const r = useMem ? MEM.imgs.get(doc.id + "/" + imgId) : await DB.getImg(doc.id, imgId);
+  if (!r) return null;
+  const rec = { mime: r.mime, name: r.name, buf: r.buf, orig: r.orig };
+  imgCache.set(imgId, rec);
+  return rec;
+}
+async function storeImg(imgId, mime, name, buf, orig) {
+  imgCache.set(imgId, { mime, name, buf, orig });
+  if (useMem) MEM.imgs.set(doc.id + "/" + imgId, { mime, name, buf, orig });
+  else await DB.putImg(doc.id, imgId, mime, name, buf, orig);
+}
+// Kamerafotos: kompakte Fassung (max. 1200 px, JPEG) für Ansicht, .html und PDF;
+// das Original bleibt als orig erhalten und geht nur in die ZIP. SVG unverändert.
+async function prepareImage(file) {
+  const isSvg = file.type === "image/svg+xml" || /\.svg$/i.test(file.name);
+  if (isSvg) {
+    const text = await file.text();
+    if (!/<svg[\s>]/i.test(text)) throw new Error("Keine gültige SVG-Datei");
+    return { mime: "image/svg+xml", name: file.name || "grafik.svg", buf: new TextEncoder().encode(text).buffer };
+  }
+  if (!/^image\//.test(file.type)) throw new Error("Kein Bildformat");
+  return compactImage(file, file.type, file.name);
+}
+async function compactImage(blob, type, name) {
+  const MAX = 1200;
+  const file = blob;
+  try {
+    const bmp = await createImageBitmap(blob, { imageOrientation: "from-image" });
+    const scale = Math.min(1, MAX / Math.max(bmp.width, bmp.height));
+    if (scale === 1 && file.size < 6e5 && /jpeg|png|webp|gif/.test(type)) { bmp.close && bmp.close(); return { mime: type, name: name || "bild", buf: await fileToBuf(file) }; }
+    const c = document.createElement("canvas");
+    c.width = Math.round(bmp.width * scale); c.height = Math.round(bmp.height * scale);
+    const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(bmp, 0, 0, c.width, c.height);
+    bmp.close && bmp.close();
+    const klein = await new Promise(r => c.toBlob(r, "image/jpeg", 0.82));
+    const base = (name || "foto").replace(/\.[^.]+$/, "");
+    return { mime: "image/jpeg", name: base + ".jpg", buf: await klein.arrayBuffer(), orig: { mime: type, name: name || "foto", buf: await fileToBuf(file) } };
+  } catch (e) {
+    // z. B. HEIC in Browsern ohne Decoder
+    return { mime: type, name: name || "bild", buf: await fileToBuf(file) };
+  }
+}
+async function insertImages(files, index) {
+  let n = 0;
+  for (const f of files) {
+    try {
+      const p = await prepareImage(f);
+      const imgId = uid();
+      await storeImg(imgId, p.mime, p.name, p.buf, p.orig);
+      doc.blocks.splice(index + n, 0, { id: uid(), type: "img", img: imgId, caption: "" });
+      n++;
+    } catch (e) { toast("Bild konnte nicht eingefügt werden: " + e.message); }
+  }
+  if (n) { render(); scheduleSave(); toast(n === 1 ? "Bild eingefügt" : n + " Bilder eingefügt"); }
+}
+
+/* ===================== Darstellung ===================== */
+let insertAt = 0; // Position für Datei-Dialoge und Einfügen aus der Zwischenablage
+function insRow(i) {
+  const d = document.createElement("div");
+  d.className = "ins"; d.dataset.i = i;
+  d.innerHTML = '<button type="button" title="Hier einfügen">+ Einfügen</button>';
+  d.querySelector("button").onclick = e => { e.stopPropagation(); openMenu(d, i); };
+  d.addEventListener("dragover", e => { e.preventDefault(); d.classList.add("drop"); });
+  d.addEventListener("dragleave", () => d.classList.remove("drop"));
+  d.addEventListener("drop", e => { e.preventDefault(); e.stopPropagation(); d.classList.remove("drop"); document.body.classList.remove("dragging"); insertImages([...e.dataTransfer.files], i); });
+  return d;
+}
+function closeMenus() { document.querySelectorAll(".menu").forEach(m => m.remove()); }
+function openMenu(anchor, i) {
+  closeMenus();
+  const m = document.createElement("div");
+  m.className = "menu";
+  const items = [
+    ["📷 Foto aufnehmen", () => { insertAt = i; $("#fileCam").click(); }],
+    ["🖼 Bild oder SVG-Datei", () => { insertAt = i; $("#fileImg").click(); }],
+    ["¶ Textabschnitt", () => addBlock(i, { type: "text", html: "", ph: "Text …" })],
+    ["H Überschrift", () => addBlock(i, { type: "h", text: "Neue Überschrift" })],
+    ["▦ Tabelle", () => addBlock(i, { type: "table", rows: [["", ""], ["", ""]] })],
+  ];
+  for (const [label, fn] of items) { const b = document.createElement("button"); b.textContent = label; b.onclick = () => { closeMenus(); fn(); }; m.appendChild(b); }
+  anchor.appendChild(m);
+}
+document.addEventListener("click", e => { if (!e.target.closest(".menu")) closeMenus(); });
+function addBlock(i, b) { doc.blocks.splice(i, 0, { id: uid(), ...b }); render(); scheduleSave(); const el = document.querySelector(`[data-bid="${doc.blocks[i].id}"] [contenteditable]`); el && el.focus(); }
+
+function blockTools(i) {
+  const t = document.createElement("div");
+  t.className = "tools";
+  const mk = (txt, title, fn) => { const b = document.createElement("button"); b.type = "button"; b.textContent = txt; b.title = title; b.onclick = fn; t.appendChild(b); };
+  mk("↑", "nach oben", () => move(i, -1));
+  mk("↓", "nach unten", () => move(i, 1));
+  mk("✕", "entfernen", () => { if (confirmDel(doc.blocks[i])) { doc.blocks.splice(i, 1); render(); scheduleSave(); } });
+  return t;
+}
+function confirmDel(b) {
+  const empty = (b.type === "text" && !b.html) || (b.type === "h" && !b.text);
+  return empty || window.confirm("Diesen Abschnitt wirklich entfernen?");
+}
+function move(i, d) { const j = i + d; if (j < 0 || j >= doc.blocks.length) return; [doc.blocks[i], doc.blocks[j]] = [doc.blocks[j], doc.blocks[i]]; render(); scheduleSave(); }
+
+function render() {
+  const locked = doc.status === "final";
+  $("#sheet").classList.toggle("final-lock", locked);
+  const box = $("#blocks");
+  box.innerHTML = "";
+  box.appendChild(insRow(0));
+  doc.blocks.forEach((b, i) => {
+    const w = document.createElement("div");
+    w.className = "block"; w.dataset.bid = b.id;
+    if (!locked) w.appendChild(blockTools(i));
+    if (b.type === "h") {
+      const h = document.createElement("div");
+      h.className = /^Folie \d/.test(b.text) ? "h folie" : "h"; h.contentEditable = !locked; h.textContent = b.text;
+      h.oninput = () => { b.text = h.textContent; scheduleSave(); };
+      h.onkeydown = e => { if (e.key === "Enter") e.preventDefault(); };
+      w.appendChild(h);
+      if (b.hint) { const d = document.createElement("details"); d.className = "hint"; d.innerHTML = "<summary>Worauf achten?</summary>" + esc(b.hint); w.appendChild(d); }
+    } else if (b.type === "text") {
+      const r = document.createElement("div");
+      r.className = "rt"; r.contentEditable = !locked; r.dataset.ph = b.ph || "Text …";
+      r.innerHTML = sanitize(b.html);
+      r.oninput = () => { b.html = r.innerHTML === "<br>" ? "" : r.innerHTML; scheduleSave(); };
+      r.onblur = () => { const s = sanitize(r.innerHTML); if (s !== r.innerHTML) r.innerHTML = s; b.html = s === "<br>" ? "" : s; scheduleSave(); };
+      w.appendChild(r);
+    } else if (b.type === "img") {
+      const f = document.createElement("figure");
+      const im = document.createElement("img");
+      im.alt = b.caption || "Bild";
+      loadImg(b.img).then(rec => { if (rec) { im.src = blobUrl(rec); if (rec.mime === "image/svg+xml") f.classList.add("svg"); } else im.alt = "Bild fehlt"; });
+      const c = document.createElement("figcaption");
+      c.contentEditable = !locked; c.textContent = b.caption || "";
+      c.oninput = () => { b.caption = c.textContent; scheduleSave(); };
+      f.append(im, c);
+      w.appendChild(f);
+    } else if (b.type === "day") {
+      w.appendChild(dayCard(b, i, locked));
+    } else if (b.type === "table") {
+      const t = document.createElement("table");
+      t.className = "eln";
+      b.rows.forEach((row, ri) => {
+        const tr = t.insertRow();
+        row.forEach((cell, ci) => {
+          const td = tr.insertCell();
+          td.contentEditable = !locked; td.innerHTML = sanitize(cell);
+          td.oninput = () => { b.rows[ri][ci] = td.innerHTML === "<br>" ? "" : td.innerHTML; scheduleSave(); };
+        });
+      });
+      w.appendChild(t);
+      if (!locked) {
+        const tb = document.createElement("div"); tb.className = "tablebtns";
+        const mk = (txt, fn) => { const x = document.createElement("button"); x.className = "btn small"; x.type = "button"; x.textContent = txt; x.onclick = () => { fn(); render(); scheduleSave(); }; tb.appendChild(x); };
+        mk("+ Zeile", () => b.rows.push(b.rows[0].map(() => "")));
+        mk("+ Spalte", () => b.rows.forEach(r => r.push("")));
+        mk("− Zeile", () => { if (b.rows.length > 1) b.rows.pop(); });
+        mk("− Spalte", () => { if (b.rows[0].length > 1) b.rows.forEach(r => r.pop()); });
+        w.appendChild(tb);
+      }
+    }
+    box.appendChild(w);
+    box.appendChild(insRow(i + 1));
+  });
+  if (locked) box.querySelectorAll(".ins").forEach(x => x.remove());
+  // Metadaten
+  $("#mTitel").value = doc.meta.titel; $("#mName").value = doc.meta.name; $("#mTeam").value = doc.meta.team;
+  $("#mDatum").value = doc.meta.datum; $("#mKurs").value = doc.meta.kurs;
+  for (const id of ["mTitel", "mName", "mTeam", "mDatum", "mKurs"]) $("#" + id).disabled = locked;
+  const ti = $("#tplInfo"), tinf = (TEMPLATES.find(t => t.key === doc.tpl) || {}).info;
+  ti.hidden = !tinf;
+  if (tinf) { ti.href = tinf.href; ti.innerHTML = `<span style="font-size:22px">📑</span><span>${esc(tinf.text)}<small>${esc(tinf.sub || "")}</small></span>`; }
+  const st = $("#mStatus");
+  st.textContent = locked ? "Endfassung · " + new Date(doc.final.at).toLocaleString("de-DE") : "Entwurf";
+  st.className = "badge" + (locked ? " final" : "");
+  $("#fmt").style.display = locked ? "none" : "";
+  $("#xUnlock").hidden = !locked;
+  document.title = (doc.meta.titel || "Lerntagebuch") + " · Horizont:8";
+  updatePrintHead();
+  renderOverview();
+}
+/* Lerntag-Karte */
+function dayCard(b, i, locked) {
+  const info = ortInfo(b.ort);
+  const c = document.createElement("div");
+  c.className = "day" + (info.ext ? " ext" : "");
+  if (locked) c.setAttribute("disabled-lock", "");
+  const opts = ['<option value="">Wo warst du heute? …</option>'].concat(ORTE.map(o => `<option ${o.v === b.ort ? "selected" : ""}>${esc(o.v)}</option>`)).join("");
+  c.innerHTML = `
+    <div class="dhead">
+      <div class="dtitle">📅 ${esc(wtag(b.datum))}${b.ort ? " · 📍 " + esc(b.ort === "Anderer außerschulischer Ort" ? (b.ortFrei || b.ort) : b.ort) : ""}${info.pflicht ? " · ✓ Pflicht-Lernort" : ""}</div>
+      <label>Datum<input type="date" data-f="datum" value="${esc(b.datum)}"></label>
+      <label>Lernort<select data-f="ort">${opts}</select></label>
+      <label ${info.frei ? "" : "hidden"}>Welcher Ort?<input data-f="ortFrei" value="${esc(b.ortFrei)}" placeholder="z. B. Naturkundemuseum"></label>
+      <label>von<input type="time" data-f="von" value="${esc(b.von)}"></label>
+      <label>bis<input type="time" data-f="bis" value="${esc(b.bis)}"></label>
+    </div>
+    <span class="q">Was haben wir heute gemacht?</span><textarea data-f="was" rows="2" placeholder="z. B. Zukunftsbox „Mobilität“ im Futurium, Interview mit … vorbereitet">${esc(b.was)}</textarea>
+    <span class="q">Was habe ich gelernt oder herausgefunden?</span><textarea data-f="gelernt" rows="2" placeholder="Ein bis zwei Sätze reichen.">${esc(b.gelernt)}</textarea>
+    <span class="q">Nächster Schritt (morgen)</span><textarea data-f="next" rows="1" placeholder="z. B. Tonstudio im Medienzentrum buchen">${esc(b.next)}</textarea>
+    <div class="mood">Wie lief's? ${MOODS.map((m, k) => `<button type="button" data-m="${k + 1}" class="${b.mood === k + 1 ? "on" : ""}" title="${["schwierig", "geht so", "gut", "super"][k]}">${m}</button>`).join("")}
+      <span class="spacer"></span><button type="button" class="btn small addphoto">📷 Foto als Beleg</button></div>`;
+  if (locked) return c;
+  c.querySelectorAll("[data-f]").forEach(el => {
+    const f = el.dataset.f;
+    el.addEventListener(el.tagName === "SELECT" || el.type === "date" ? "change" : "input", () => {
+      b[f] = el.value; scheduleSave();
+      if (f === "ort" || f === "datum") { render(); }
+      else if (f === "ortFrei") { c.querySelector(".dtitle").textContent = "📅 " + wtag(b.datum) + " · 📍 " + (b.ortFrei || b.ort); renderOverview(); }
+    });
+  });
+  c.querySelectorAll("[data-m]").forEach(x => x.onclick = () => { const v = +x.dataset.m; b.mood = b.mood === v ? 0 : v; scheduleSave(); c.querySelectorAll("[data-m]").forEach(y => y.classList.toggle("on", +y.dataset.m === b.mood)); });
+  c.querySelector(".addphoto").onclick = () => { insertAt = i + 1; $("#fileCam").click(); };
+  return c;
+}
+function dayInsertIndex() {
+  let last = -1;
+  doc.blocks.forEach((b, k) => { if (b.type === "day") last = k; });
+  if (last >= 0) { let k = last + 1; while (k < doc.blocks.length && doc.blocks[k].type === "img") k++; return k; }
+  const h = doc.blocks.findIndex(b => b.type === "h" && /^Lerntage/.test(b.text));
+  return h >= 0 ? h + 1 : doc.blocks.length;
+}
+function addToday() {
+  if (doc.status === "final") { toast("Das Tagebuch ist eine Endfassung. Zum Weiterschreiben unter „Sichern / Exportieren“ entsperren."); return; }
+  const vorh = doc.blocks.findIndex(b => b.type === "day" && b.datum === today());
+  if (vorh >= 0) { scrollToBlock(doc.blocks[vorh].id); toast("Für heute gibt es schon einen Eintrag"); return; }
+  const i = dayInsertIndex();
+  doc.blocks.splice(i, 0, { id: uid(), ...DAY() });
+  render(); scheduleSave(); scrollToBlock(doc.blocks[i].id, "select");
+}
+function scrollToBlock(id, focusSel) {
+  const el = document.querySelector(`[data-bid="${id}"]`); if (!el) return;
+  el.scrollIntoView({ behavior: "smooth", block: "center" });
+  if (focusSel) setTimeout(() => el.querySelector(focusSel)?.focus(), 350);
+}
+function renderOverview() {
+  const days = doc.blocks.filter(b => b.type === "day");
+  const pfl = days.filter(d => ortInfo(d.ort).pflicht).sort((a, b) => a.datum.localeCompare(b.datum));
+  const ext = days.filter(d => ortInfo(d.ort).ext);
+  const ov = $("#overview");
+  const p = pfl.length
+    ? `<div class="pflicht ok">✅ <span><b>Pflicht erfüllt:</b> ${pfl.map(d => esc(d.ort) + " am " + esc(wtag(d.datum))).join(", ")}</span></div>`
+    : `<div class="pflicht offen">📍 <span><b>Pflicht noch offen:</b> mindestens ein Besuch im <b>Futurium</b> oder im <b>Humboldt Forum</b> (dienstags geschlossen). Tipp: Gestalten im <b>Medienzentrum Pankow</b>.</span></div>`;
+  const byDate = new Map(days.map(d => [d.datum, d]));
+  const t = today();
+  const week = PROJEKTTAGE.map(iso => {
+    const d = byDate.get(iso), e = d && ortInfo(d.ort).ext;
+    return `<div class="wd ${d ? "on" : ""} ${e ? "ext" : ""} ${iso === t ? "today" : ""}" data-go="${iso}" title="${d ? esc(d.ort || "Eintrag ohne Ort") : "noch kein Eintrag"}"><b>${esc(wtag(iso).split(",")[0])}</b>${iso.slice(8, 10)}.06.<br>${d ? (e ? "📍" : "✎") : "·"}</div>`;
+  }).join("");
+  ov.innerHTML = p + `<div class="week" title="Projektphase 14.–25.06.2027: grün = außerschulischer Lernort">${week}</div>
+    <div class="note" style="margin:0">${days.length} Lerntag${days.length === 1 ? "" : "e"} eingetragen · davon ${ext.length} außerschulisch</div>`;
+  ov.querySelectorAll("[data-go]").forEach(x => x.onclick = () => { const d = byDate.get(x.dataset.go); if (d) scrollToBlock(d.id); });
+}
+function updatePrintHead() {
+  const m = doc.meta;
+  $("#printHead").innerHTML = `<h1>Lerntagebuch Horizont:8 · ${esc(m.titel || "Projekt")}</h1><div>${esc(m.name || "Name fehlt")}${m.team ? " · Gruppe mit " + esc(m.team) : ""} · ${esc(m.kurs)} · ${doc.status === "final" ? "Endfassung vom " + esc(new Date(doc.final.at).toLocaleString("de-DE")) + " · Prüfsumme " + esc(doc.final.hash.slice(0, 16)) + "…" : "Entwurf, gedruckt am " + new Date().toLocaleString("de-DE")}</div>`;
+}
+// Beim Drucken: Kopf aktualisieren, Dateiname für „Als PDF sichern“ = Datum - Titel - Name
+let titleBefore = "";
+window.addEventListener("beforeprint", () => { updatePrintHead(); titleBefore = document.title; document.title = baseFileName(doc.status === "final" ? "Endfassung" : ""); });
+window.addEventListener("afterprint", () => { document.title = titleBefore; });
+for (const [id, key] of [["mTitel", "titel"], ["mName", "name"], ["mTeam", "team"], ["mDatum", "datum"], ["mKurs", "kurs"]]) {
+  $("#" + id).addEventListener("input", e => { doc.meta[key] = e.target.value; scheduleSave(); if (key === "titel") document.title = (e.target.value || "Lerntagebuch") + " · Horizont:8"; });
+}
+
+/* Formatleiste */
+$("#fmt").addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });
+$("#fmt").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  const a = document.activeElement;
+  if (!a || !a.isContentEditable) { toast("Erst in ein Textfeld klicken"); return; }
+  if (b.dataset.cmd) document.execCommand(b.dataset.cmd, false, null);
+  if (b.dataset.ins) document.execCommand("insertText", false, b.dataset.ins);
+  a.dispatchEvent(new Event("input"));
+});
+/* Einfügen: Bilder aus der Zwischenablage an der aktuellen Stelle, Text nur als reiner Text */
+document.addEventListener("paste", e => {
+  const files = [...(e.clipboardData?.files || [])].filter(f => /^image\//.test(f.type));
+  const blockEl = document.activeElement?.closest?.(".block");
+  if (files.length && doc.status !== "final") {
+    e.preventDefault();
+    const i = blockEl ? doc.blocks.findIndex(b => b.id === blockEl.dataset.bid) + 1 : doc.blocks.length;
+    insertImages(files, i);
+    return;
+  }
+  if (document.activeElement?.isContentEditable) {
+    e.preventDefault();
+    document.execCommand("insertText", false, e.clipboardData.getData("text/plain"));
+  }
+});
+/* Ziehen und Ablegen irgendwo: ans Ende, auf eine Einfügemarke: an diese Stelle */
+let dragDepth = 0;
+document.addEventListener("dragenter", e => { if (e.dataTransfer?.types?.includes("Files")) { dragDepth++; document.body.classList.add("dragging"); } });
+document.addEventListener("dragleave", () => { if (--dragDepth <= 0) { dragDepth = 0; document.body.classList.remove("dragging"); } });
+document.addEventListener("dragover", e => e.preventDefault());
+document.addEventListener("drop", e => {
+  e.preventDefault(); dragDepth = 0; document.body.classList.remove("dragging");
+  const files = [...(e.dataTransfer?.files || [])];
+  if (!files.length || doc.status === "final") return;
+  if (files.length === 1 && /\.(zip|html?|json)$/i.test(files[0].name)) { importFile(files[0]); return; }
+  insertImages(files, doc.blocks.length);
+});
+$("#fileImg").onchange = e => { insertImages([...e.target.files], insertAt); e.target.value = ""; };
+$("#fileCam").onchange = e => { insertImages([...e.target.files], insertAt); e.target.value = ""; };
+
+/* ===================== Speichern ===================== */
+function scheduleSave() {
+  $("#status").textContent = "nicht gespeichert …";
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveNow, 600);
+}
+async function saveNow() {
+  clearTimeout(saveTimer);
+  doc.modified = new Date().toISOString();
+  try {
+    if (useMem) MEM.docs.set(doc.id, structuredClone(doc)); else await DB.putDoc(structuredClone(doc));
+    try { localStorage.setItem("h8-eln-last", doc.id); } catch (e) {}
+    $("#status").textContent = "gespeichert " + new Date().toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + (useMem ? " (nur bis zum Schließen)" : "");
+  } catch (e) {
+    $("#status").textContent = "Speichern fehlgeschlagen: bitte exportieren!";
+    toast("Speichern im Browser fehlgeschlagen (" + e.message + "). Bitte als .zip exportieren.", 6000);
+  }
+}
+window.addEventListener("beforeunload", () => { if (saveTimer) saveNow(); });
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden" && saveTimer) saveNow(); });
+
+/* ===================== Export ===================== */
+function bufToB64(buf) {
+  const bytes = new Uint8Array(buf); let s = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+function b64ToBuf(b64) { const s = atob(b64); const u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u.buffer; }
+const EXT = { "image/jpeg": "jpg", "image/png": "png", "image/gif": "gif", "image/webp": "webp", "image/svg+xml": "svg", "image/heic": "heic" };
+function safeName(s) { return String(s || "").normalize("NFC").replace(/[\\/:*?"<>|]+/g, "").replace(/\s+/g, " ").trim().slice(0, 80); }
+function baseFileName(suffix) {
+  const parts = ["Lerntagebuch", doc.meta.titel || "Horizont8", doc.meta.name].map(safeName).filter(Boolean);
+  return parts.join(" - ") + (suffix ? " (" + suffix + ")" : "");
+}
+async function sha256(text) {
+  try { const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)); return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, "0")).join(""); }
+  catch (e) { return ""; }
+}
+// Dokument als eigenständige, lesbare HTML-Seite; Bildquellen über src(imgId)
+function buildHtml(d, src, label) {
+  const m = d.meta;
+  const body = d.blocks.map(b => {
+    if (b.type === "h") return `<h2>${esc(b.text)}</h2>`;
+    if (b.type === "text") return `<div class="rt">${sanitize(b.html)}</div>`;
+    if (b.type === "img") return `<figure><img data-img-id="${esc(b.img)}" src="${src(b.img)}" alt="${esc(b.caption || "Bild")}">${b.caption ? `<figcaption>${esc(b.caption)}</figcaption>` : ""}</figure>`;
+    if (b.type === "day") {
+      const ort = b.ort === "Anderer außerschulischer Ort" ? (b.ortFrei || b.ort) : b.ort;
+      const zeit = b.von || b.bis ? ` · ${esc(b.von)}–${esc(b.bis)} Uhr` : "";
+      const row = (q, v) => v ? `<p><b>${q}</b><br>${esc(v).replace(/\n/g, "<br>")}</p>` : "";
+      return `<section class="day${ortInfo(b.ort).ext ? " ext" : ""}"><h3>📅 ${esc(wtag(b.datum))}${ort ? " · 📍 " + esc(ort) : ""}${zeit}${ortInfo(b.ort).pflicht ? " · ✓ Pflicht-Lernort" : ""}${b.mood ? " · " + MOODS[b.mood - 1] : ""}</h3>${row("Was haben wir heute gemacht?", b.was)}${row("Was habe ich gelernt oder herausgefunden?", b.gelernt)}${row("Nächster Schritt", b.next)}</section>`;
+    }
+    if (b.type === "table") return `<table>${b.rows.map((r, i) => `<tr>${r.map(c => i === 0 ? `<th>${sanitize(c)}</th>` : `<td>${sanitize(c)}</td>`).join("")}</tr>`).join("")}</table>`;
+    return "";
+  }).join("\n");
+  const fin = d.final ? `<p class="final">Endfassung vom ${esc(new Date(d.final.at).toLocaleString("de-DE"))} · Prüfsumme (SHA-256 der Inhalte): <code>${esc(d.final.hash)}</code></p>` : "";
+  // Bilddaten nicht doppelt einbetten: JSON verweist nur auf die Bild-IDs
+  const data = JSON.stringify(d).replace(/</g, "\\u003c");
+  return `<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="${FORMAT} ${VERSION}">
+<title>Lerntagebuch · ${esc(m.titel || "Horizont:8")} · ${esc(m.name)}</title>
+<style>
+body{font-family:-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;color:#1d2327;max-width:820px;margin:0 auto;padding:24px 16px 60px;line-height:1.5;background:#fff}
+header{border-bottom:2px solid #c2410c;margin-bottom:12px;padding-bottom:6px}
+h1{font-size:24px;margin:0 0 4px;color:#c2410c}.meta{color:#555;font-size:14px}
+.label{display:inline-block;font-size:12px;padding:1px 8px;border-radius:10px;background:#fdeee6;color:#c2410c;margin-left:6px}
+.day{border:1px solid #e4dccb;border-left:6px solid #c2410c;border-radius:10px;padding:8px 14px;margin:12px 0;break-inside:avoid;background:#fffdf8}.day.ext{border-left-color:#2e7d4f}.day h3{margin:0 0 4px;font-size:16px;color:#c2410c}.day.ext h3{color:#2e7d4f}.day p{margin:6px 0}
+h2{font-size:18px;color:#c2410c;border-bottom:1px solid #fdeee6;margin:20px 0 6px}
+figure{margin:10px 0;text-align:center;break-inside:avoid}figure img{max-width:100%;border:1px solid #d9dee2;border-radius:4px}
+figcaption{font-size:14px;color:#555}
+table{border-collapse:collapse;width:100%;margin:8px 0}th,td{border:1px solid #c6cdd2;padding:4px 6px;text-align:left;vertical-align:top}th{background:#fdeee6}
+.final{font-size:12px;color:#2e7d4f;border-top:1px solid #d9dee2;margin-top:30px;padding-top:8px;word-break:break-all}
+footer{font-size:12px;color:#888;margin-top:30px}
+</style></head><body>
+<header><h1>Lerntagebuch · ${esc(m.titel || "Horizont:8")}<span class="label">${esc(label)}</span></h1>
+<div class="meta">${esc(m.name)}${m.team ? " · Gruppe mit " + esc(m.team) : ""} · ${esc(m.kurs)} · Horizont:8 · Zukunfts:Bilder</div></header>
+${body}
+${fin}
+<footer>Erstellt mit dem Lerntagebuch Horizont:8 (Rosa-Luxemburg-Gymnasium). Diese Datei lässt sich im Lerntagebuch über „Importieren“ wieder öffnen und weiterbearbeiten.</footer>
+<script type="application/json" id="eln-data">${data}<\/script>
+</body></html>`;
+}
+function download(name, blob) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+async function allImages() {
+  const ids = [...new Set(doc.blocks.filter(b => b.type === "img").map(b => b.img))];
+  const out = new Map();
+  for (const id of ids) { const r = await loadImg(id); if (r) out.set(id, r); }
+  return out;
+}
+async function exportHtml(label, suffix) {
+  await saveNow();
+  const imgs = await allImages();
+  const src = id => { const r = imgs.get(id); return r ? `data:${r.mime};base64,${bufToB64(r.buf)}` : ""; };
+  const html = buildHtml(doc, src, label);
+  download(baseFileName(suffix) + ".html", new Blob([html], { type: "text/html;charset=utf-8" }));
+  toast(label + " heruntergeladen");
+}
+async function exportZip() {
+  await saveNow();
+  const imgs = await allImages();
+  const files = [];
+  const pathOf = new Map();
+  let k = 1;
+  const zipImg = new Map(); // in der ZIP liegen die Fotos in Originalgröße
+  for (const [id, rec] of imgs) {
+    const r = rec.orig || rec;
+    zipImg.set(id, r);
+    const p = `bilder/abb-${String(k++).padStart(2, "0")}-${id}.${EXT[r.mime] || "bin"}`;
+    pathOf.set(id, p);
+    files.push({ name: p, data: new Uint8Array(r.buf) });
+  }
+  const label = doc.status === "final" ? "Endfassung" : "Zwischenstand";
+  const html = buildHtml(doc, id => pathOf.get(id) || "", label);
+  const json = JSON.stringify({ ...doc, images: Object.fromEntries([...zipImg].map(([id, r]) => [id, { path: pathOf.get(id), mime: r.mime, name: r.name }])) }, null, 1);
+  const enc = new TextEncoder();
+  files.unshift({ name: "lerntagebuch.html", data: enc.encode(html) }, { name: "lerntagebuch.json", data: enc.encode(json) });
+  download(baseFileName(doc.status === "final" ? "Endfassung" : "") + ".zip", Zip.write(files));
+  toast("ZIP heruntergeladen (" + imgs.size + (imgs.size === 1 ? " Bild)" : " Bilder)"));
+}
+function contentForHash(d) { return JSON.stringify({ meta: d.meta, blocks: d.blocks }); }
+async function finalize() {
+  if (!doc.meta.name.trim()) { toast("Bitte zuerst den Namen eintragen"); $("#mName").focus(); return; }
+  if (!doc.meta.titel.trim()) { toast("Bitte zuerst den Projekttitel eintragen"); $("#mTitel").focus(); return; }
+  const hinweise = [];
+  const days = doc.blocks.filter(b => b.type === "day");
+  if (!days.length) hinweise.push("noch kein Lerntag eingetragen");
+  if (!days.some(d => ortInfo(d.ort).pflicht)) hinweise.push("Pflicht-Lernort (Futurium oder Humboldt Forum) fehlt");
+  const ohneOrt = days.filter(d => !d.ort).length; if (ohneOrt) hinweise.push(`${ohneOrt} Lerntag(e) ohne Lernort`);
+  const leer = days.filter(d => !String(d.was || "").trim()).length; if (leer) hinweise.push(`${leer} Lerntag(e) ohne „Was haben wir heute gemacht?“`);
+  const ohneText = doc.blocks.filter(b => b.type === "img" && !String(b.caption || "").trim()).length;
+  if (ohneText) hinweise.push(`${ohneText} Foto(s) ohne Bildunterschrift`);
+  if (!window.confirm((hinweise.length ? "Hinweise vor der Abgabe:\n• " + hinweise.join("\n• ") + "\n\nTrotzdem " : "") + "als Endfassung markieren? Das Tagebuch wird schreibgeschützt und als .html heruntergeladen. Danach ZIP und PDF erzeugen.")) return;
+  // Prüfsumme über Text und Bilddaten
+  const imgs = await allImages();
+  let all = contentForHash(doc);
+  for (const [id, r] of imgs) all += id + bufToB64(r.buf);
+  doc.final = { at: new Date().toISOString(), hash: await sha256(all) };
+  doc.status = "final";
+  render(); await saveNow();
+  await exportHtml("Endfassung", "Endfassung");
+  setTimeout(() => { $("#dExport").showModal(); toast("Endfassung gesichert. Jetzt Schritt 2 (ZIP) und Schritt 3 (PDF).", 5000); }, 600);
+}
+
+/* ===================== Import ===================== */
+function validDoc(d) { return d && d.format === FORMAT && Array.isArray(d.blocks) && d.meta; }
+function cleanDoc(d) {
+  // nur bekannte Felder übernehmen, Texte bereinigen
+  const S = v => String(v ?? "").slice(0, 4000);
+  const blocks = d.blocks.filter(b => ["h", "text", "img", "table", "day"].includes(b.type)).map(b => {
+    if (b.type === "day") return { id: uid(), type: "day", datum: /^\d{4}-\d{2}-\d{2}$/.test(b.datum) ? b.datum : today(), ort: S(b.ort), ortFrei: S(b.ortFrei), von: S(b.von).slice(0, 5), bis: S(b.bis).slice(0, 5), was: S(b.was), gelernt: S(b.gelernt), next: S(b.next), mood: [0, 1, 2, 3, 4].includes(b.mood) ? b.mood : 0 };
+    if (b.type === "h") return { id: uid(), type: "h", text: String(b.text || ""), hint: b.hint ? String(b.hint) : undefined };
+    if (b.type === "text") return { id: uid(), type: "text", html: sanitize(b.html), ph: b.ph ? String(b.ph) : undefined };
+    if (b.type === "img") return { id: uid(), type: "img", img: String(b.img), caption: String(b.caption || "") };
+    return { id: uid(), type: "table", rows: (b.rows || [[""]]).map(r => r.map(c => sanitize(c))) };
+  });
+  const m = d.meta || {};
+  return {
+    format: FORMAT, version: VERSION, id: uid(), tpl: String(d.tpl || ""),
+    meta: { titel: String(m.titel || ""), name: String(m.name || ""), team: String(m.team || ""), datum: String(m.datum || today()), kurs: String(m.kurs || "") },
+    status: d.status === "final" ? "final" : "entwurf", final: d.final && d.final.at ? { at: String(d.final.at), hash: String(d.final.hash || "") } : null,
+    created: String(d.created || new Date().toISOString()), modified: new Date().toISOString(), blocks,
+  };
+}
+async function adoptDoc(d, getImg) {
+  const nd = cleanDoc(d);
+  const prev = doc; doc = nd; imgCache.clear();
+  let missing = 0;
+  for (const b of nd.blocks.filter(b => b.type === "img")) {
+    const r = await getImg(b.img);
+    if (!r) { missing++; continue; }
+    const p = /^image\/(?!svg)/.test(r.mime) ? await compactImage(new Blob([r.buf], { type: r.mime }), r.mime, r.name) : r;
+    await storeImg(b.img, p.mime, p.name, p.buf, p.orig);
+  }
+  await saveNow();
+  render();
+  toast(`„${nd.meta.titel || "Lerntagebuch"}“ importiert` + (missing ? `, ${missing} Bild(er) fehlen` : ""), 4000);
+  return prev;
+}
+async function importFile(file) {
+  try {
+    if (prevSaveFlush()) await saveNow();
+    const name = file.name.toLowerCase();
+    if (name.endsWith(".zip") || file.type.includes("zip")) {
+      const entries = await Zip.read(await file.arrayBuffer());
+      const find = n => entries.find(e => e.name === n || e.name.endsWith("/" + n));
+      const j = find("lerntagebuch.json") || find("protokoll.json");
+      if (j) {
+        const d = JSON.parse(new TextDecoder().decode(await j.data()));
+        if (!validDoc(d)) throw new Error("lerntagebuch.json hat kein bekanntes Format");
+        await adoptDoc(d, async id => {
+          const info = d.images && d.images[id]; if (!info) return null;
+          const e = find(info.path); if (!e) return null;
+          return { mime: info.mime, name: info.name, buf: (await e.data()).buffer };
+        });
+        return;
+      }
+      const h = find("lerntagebuch.html") || entries.find(e => /\.html?$/i.test(e.name));
+      if (!h) throw new Error("Keine Lerntagebuch-Datei in der ZIP-Datei");
+      const html = new TextDecoder().decode(await h.data());
+      const { d, imgSrc } = parseExportHtml(html);
+      const dir = h.name.includes("/") ? h.name.slice(0, h.name.lastIndexOf("/") + 1) : "";
+      await adoptDoc(d, async id => {
+        const p = imgSrc.get(id); if (!p) return null;
+        const e = entries.find(x => x.name === dir + p) || find(p.split("/").pop()); if (!e) return null;
+        const ext = p.split(".").pop().toLowerCase();
+        const mime = Object.keys(EXT).find(k => EXT[k] === ext) || "application/octet-stream";
+        return { mime, name: p.split("/").pop(), buf: (await e.data()).buffer };
+      });
+    } else if (/\.html?$/.test(name)) {
+      const { d, imgSrc } = parseExportHtml(await file.text());
+      await adoptDoc(d, async id => {
+        const s = imgSrc.get(id) || "";
+        const m = /^data:([^;,]+);base64,(.*)$/.exec(s);
+        return m ? { mime: m[1], name: id + "." + (EXT[m[1]] || "bin"), buf: b64ToBuf(m[2]) } : null;
+      });
+    } else if (name.endsWith(".json")) {
+      const d = JSON.parse(await file.text());
+      if (!validDoc(d)) throw new Error("Unbekanntes Format");
+      await adoptDoc(d, async () => null);
+    } else throw new Error("Bitte eine .zip- oder .html-Datei des Lerntagebuchs wählen");
+  } catch (e) {
+    console.error(e);
+    toast("Import fehlgeschlagen: " + e.message, 6000);
+  }
+}
+function prevSaveFlush() { return !!saveTimer; }
+function parseExportHtml(html) {
+  const p = new DOMParser().parseFromString(html, "text/html");
+  const s = p.getElementById("eln-data");
+  if (!s) throw new Error("Diese HTML-Datei stammt nicht aus dem Lerntagebuch");
+  const d = JSON.parse(s.textContent);
+  if (!validDoc(d)) throw new Error("Unbekanntes Format");
+  const imgSrc = new Map();
+  p.querySelectorAll("img[data-img-id]").forEach(i => imgSrc.set(i.getAttribute("data-img-id"), i.getAttribute("src")));
+  return { d, imgSrc };
+}
+$("#fileImport").onchange = e => { const f = e.target.files[0]; if (f) importFile(f); e.target.value = ""; };
+
+/* ===================== ZIP (ohne externe Bibliothek) ===================== */
+const Zip = (() => {
+  const CRC = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; CRC[n] = c >>> 0; }
+  const crc32 = u => { let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = CRC[(c ^ u[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+  function dosTime(d) {
+    return { time: (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), date: ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate() };
+  }
+  // Schreiben: Methode 0 (ohne Kompression; Fotos sind ohnehin komprimiert), UTF-8-Dateinamen
+  function write(files) {
+    const enc = new TextEncoder(), parts = [], central = [];
+    let offset = 0;
+    const { time, date } = dosTime(new Date());
+    for (const f of files) {
+      const name = enc.encode(f.name), data = f.data, crc = crc32(data);
+      const h = new DataView(new ArrayBuffer(30));
+      h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+      h.setUint16(10, time, true); h.setUint16(12, date, true); h.setUint32(14, crc, true);
+      h.setUint32(18, data.length, true); h.setUint32(22, data.length, true); h.setUint16(26, name.length, true); h.setUint16(28, 0, true);
+      parts.push(h.buffer, name, data);
+      const c = new DataView(new ArrayBuffer(46));
+      c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true);
+      c.setUint16(12, time, true); c.setUint16(14, date, true); c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true);
+      c.setUint16(28, name.length, true); c.setUint16(30, 0, true); c.setUint16(32, 0, true); c.setUint16(34, 0, true); c.setUint16(36, 0, true);
+      c.setUint32(38, 0, true); c.setUint32(42, offset, true);
+      central.push(c.buffer, name);
+      offset += 30 + name.length + data.length;
+    }
+    const cdSize = central.reduce((s, p) => s + (p.byteLength ?? p.length), 0);
+    const e = new DataView(new ArrayBuffer(22));
+    e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true);
+    e.setUint32(12, cdSize, true); e.setUint32(16, offset, true);
+    return new Blob([...parts, ...central, e.buffer], { type: "application/zip" });
+  }
+  // Lesen über das zentrale Verzeichnis; Methode 0 und 8 (Deflate, z. B. aus dem Finder neu gepackt)
+  async function read(buf) {
+    const v = new DataView(buf), u8 = new Uint8Array(buf);
+    let eocd = -1;
+    for (let i = buf.byteLength - 22; i >= Math.max(0, buf.byteLength - 65557); i--) if (v.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+    if (eocd < 0) throw new Error("Keine gültige ZIP-Datei");
+    const n = v.getUint16(eocd + 10, true);
+    let p = v.getUint32(eocd + 16, true);
+    const out = [];
+    for (let k = 0; k < n; k++) {
+      if (v.getUint32(p, true) !== 0x02014b50) throw new Error("ZIP-Verzeichnis beschädigt");
+      const flags = v.getUint16(p + 8, true), method = v.getUint16(p + 10, true), csize = v.getUint32(p + 20, true);
+      const nlen = v.getUint16(p + 28, true), xlen = v.getUint16(p + 30, true), clen = v.getUint16(p + 32, true), lho = v.getUint32(p + 42, true);
+      const nameBytes = u8.subarray(p + 46, p + 46 + nlen);
+      const name = (flags & 0x0800) ? new TextDecoder().decode(nameBytes) : new TextDecoder().decode(nameBytes); // macOS schreibt UTF-8 auch ohne Flag
+      p += 46 + nlen + xlen + clen;
+      if (name.endsWith("/") || name.startsWith("__MACOSX/")) continue;
+      const start = lho + 30 + v.getUint16(lho + 26, true) + v.getUint16(lho + 28, true);
+      const raw = u8.subarray(start, start + csize);
+      out.push({ name: name.normalize("NFC"), data: async () => {
+        if (method === 0) return raw.slice();
+        if (method === 8) {
+          if (typeof DecompressionStream === "undefined") throw new Error("Dieser Browser kann gepackte ZIP-Dateien nicht entpacken");
+          const s = new Blob([raw]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+          return new Uint8Array(await new Response(s).arrayBuffer());
+        }
+        throw new Error("Nicht unterstützte ZIP-Kompression (Methode " + method + ")");
+      } });
+    }
+    return out;
+  }
+  return { write, read, crc32 };
+})();
+
+/* ===================== Dialoge ===================== */
+document.querySelectorAll("dialog [data-close]").forEach(b => b.onclick = () => b.closest("dialog").close());
+$("#bNew").onclick = () => {
+  const l = $("#tplList"); l.innerHTML = "";
+  for (const t of TEMPLATES) {
+    const it = document.createElement("div"); it.className = "item";
+    it.innerHTML = `<div><b>${esc(t.name)}</b><small>${esc(t.desc)}</small></div>`;
+    const b = document.createElement("button"); b.className = "btn primary"; b.textContent = "Anlegen";
+    b.onclick = async () => { await saveNow(); doc = newDoc(t); imgCache.clear(); render(); await saveNow(); $("#dNew").close(); toast("Neues Lerntagebuch angelegt"); };
+    it.appendChild(b); l.appendChild(it);
+  }
+  $("#dNew").showModal();
+};
+$("#bOpen").onclick = async () => {
+  await saveNow();
+  const docs = (useMem ? [...MEM.docs.values()] : await DB.allDocs()).sort((a, b) => b.modified.localeCompare(a.modified));
+  const l = $("#docList"); l.innerHTML = "";
+  for (const d of docs) {
+    const it = document.createElement("div"); it.className = "item";
+    const cur = d.id === doc.id;
+    it.innerHTML = `<div><b>${esc(d.meta.titel || "ohne Titel")}</b>${cur ? ' <span class="badge">geöffnet</span>' : ""}${d.status === "final" ? ' <span class="badge final">Endfassung</span>' : ""}<small>${esc(d.meta.name)} · ${esc(d.meta.datum)} · geändert ${new Date(d.modified).toLocaleString("de-DE")}</small></div>`;
+    const o = document.createElement("button"); o.className = "btn"; o.textContent = "Öffnen"; o.disabled = cur;
+    o.onclick = async () => { doc = useMem ? structuredClone(MEM.docs.get(d.id)) : await DB.getDoc(d.id); imgCache.clear(); render(); try { localStorage.setItem("h8-eln-last", doc.id); } catch (e) {} $("#dOpen").close(); };
+    const x = document.createElement("button"); x.className = "btn danger"; x.textContent = "Löschen"; x.disabled = cur;
+    x.onclick = async () => { if (!window.confirm(`„${d.meta.titel || "ohne Titel"}“ endgültig aus diesem Browser löschen?`)) return; if (useMem) MEM.docs.delete(d.id); else await DB.delDoc(d.id); it.remove(); };
+    it.append(o, x); l.appendChild(it);
+  }
+  $("#dOpen").showModal();
+};
+$("#bImport").onclick = () => $("#fileImport").click();
+$("#bToday").onclick = () => addToday();
+$("#bExport").onclick = () => $("#dExport").showModal();
+$("#xHtml").onclick = () => exportHtml(doc.status === "final" ? "Endfassung" : "Zwischenstand", doc.status === "final" ? "Endfassung" : "Zwischenstand " + new Date().toTimeString().slice(0, 5).replace(":", "-"));
+$("#xZip").onclick = () => exportZip();
+$("#xFinal").onclick = () => { $("#dExport").close(); finalize(); };
+$("#xPrint").onclick = () => { $("#dExport").close(); setTimeout(() => window.print(), 100); };
+$("#xUnlock").onclick = () => { if (!window.confirm("Endfassung entsperren? Die Prüfsumme verfällt, das Tagebuch wird wieder ein Entwurf.")) return; doc.status = "entwurf"; doc.final = null; render(); saveNow(); $("#dExport").close(); };
+
+/* ===================== Start ===================== */
+(async () => {
+  try { await DB.open(); navigator.storage && navigator.storage.persist && navigator.storage.persist(); }
+  catch (e) { useMem = true; toast("Speichern im Browser nicht möglich (privates Fenster?). Bitte regelmäßig exportieren.", 6000); }
+  let last = null;
+  try { last = localStorage.getItem("h8-eln-last"); } catch (e) {}
+  if (!useMem && last) doc = await DB.getDoc(last);
+  if (!doc && !useMem) { const all = await DB.allDocs(); if (all.length) doc = all.sort((a, b) => b.modified.localeCompare(a.modified))[0]; }
+  // Direktlink ?vorlage=<key>: vorhandenen Entwurf dieser Vorlage öffnen, sonst neu anlegen
+  let wunsch = null;
+  try { wunsch = new URLSearchParams(location.search).get("vorlage"); } catch (e) {}
+  const wtpl = wunsch && TEMPLATES.find(t => t.key === wunsch);
+  if (wtpl) {
+    if (!(doc && doc.tpl === wtpl.key && doc.status !== "final")) {
+      const alle = useMem ? [] : await DB.allDocs();
+      const vorh = alle.filter(d => d.tpl === wtpl.key && d.status !== "final").sort((a, b) => b.modified.localeCompare(a.modified))[0];
+      if (vorh) doc = vorh;
+      else { doc = newDoc(wtpl); setTimeout(() => toast("Neues Lerntagebuch angelegt"), 300); }
+    }
+    try { history.replaceState(null, "", location.pathname); } catch (e) {}
+  }
+  if (!doc) doc = newDoc(TEMPLATES[0]);
+  render();
+  // Direktlink ?heute: sofort den heutigen Lerntag öffnen (z. B. über QR-Code am Lernort)
+  try { if (new URLSearchParams(location.search).has("heute")) { history.replaceState(null, "", location.pathname); setTimeout(addToday, 300); } } catch (e) {}
+  if (wtpl) { await saveNow(); try { localStorage.setItem("h8-eln-last", doc.id); } catch (e) {} }
+  $("#status").textContent = useMem ? "nur im Speicher" : "bereit";
+  const pinFmt = () => { $("#fmt").style.top = $("header.app").offsetHeight + "px"; };
+  pinFmt(); window.addEventListener("resize", pinFmt);
+})();
+</script>
+</body>
+</html>
