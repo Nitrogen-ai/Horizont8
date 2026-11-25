@@ -10,7 +10,8 @@ window.H8_DATA = {
     klassen: "8.4 + 8.5",
     teilnehmende: ["Orga 1", "Orga 2", "KL 1", "KL 2"],
     rollen: { "Orga 1": "Orga (operativ)", "Orga 2": "Orga (Kontakte, Termine, Partner)", "KL 1": "Klassenleitung", "KL 2": "Klassenleitung" },
-    storageKey: "h8-orga-2026-11-25"
+    storageKey: "h8-orga-2026-11-25",
+    beschluss: { oberthema: "Zukunfts:Bilder", claim: "Pflicht: mind. ein außerschulischer Lernort (Futurium oder Humboldt Forum) · Medienzentrum Pankow als Gestaltungsort empfohlen" }
   },
 
   agenda: [
@@ -170,7 +171,7 @@ window.H8_DATA = {
           beispiel: "Solar-Rover → Wasserproben-Rover · Arduino-Feuchtesensor · Podcast „Wem gehört die Spree?“",
           pro: "Konkreter, kostenloser Einstieg · sehr interdisziplinär · gut für Futurium (Städte, Ernährung, Energie)",
           contra: "Klingt enger als Beweg:gründe → Wortspiel offen formulieren und betonen, dass Wasser auch Metapher sein darf" },
-        { id: "th-zukunft", kicker: "Vorschlag 2 · Start im Futurium", titel: "Zukunft:bilder",
+        { id: "th-zukunft", kicker: "Vorschlag 2 · Start im Futurium", titel: "Zukunfts:Bilder", badge: "beschlossen am 25.11.2026",
           claim: "Wie wollen wir morgen leben?",
           text: "Die neun Futurium-Zukunftsboxen als Themenfelder – mögliche, wahrscheinliche, wünschbare Zukünfte entwerfen und ein Stück davon heute bauen.",
           chips: ["Städte", "Arbeit", "Ernährung", "Gesundheit", "Demokratie", "Mensch & Technik", "Weltraum", "Energie", "Mobilität"],

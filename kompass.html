@@ -63,7 +63,7 @@
     <circle cx="200" cy="200" r="186" fill="var(--card)" stroke="var(--fg)" stroke-width="3"/>
     <circle cx="200" cy="200" r="150" fill="none" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="3 6"/>
     <g id="ticks"></g><g id="labels"></g>
-    <g id="needle"><polygon points="200,58 214,200 200,214 186,200" fill="var(--accent)"/><polygon points="200,342 214,200 200,186 186,200" fill="var(--fg)" opacity=".25"/></g>
+    <g id="needle"><polygon points="200,98 213,200 200,213 187,200" fill="var(--accent)"/><polygon points="200,302 213,200 200,187 187,200" fill="var(--fg)" opacity=".25"/></g>
     <circle cx="200" cy="200" r="9" fill="var(--fg)"/>
   </svg>
 </div>
@@ -87,7 +87,7 @@
   document.getElementById("meta").textContent = D.meta.untertitel + " · " + D.meta.termin;
 
   function hero() {
-    const d = H.st.decisions, ot = document.getElementById("ot");
+    const d0 = H.st.decisions, B = D.meta.beschluss || {}, d = { oberthema: d0.oberthema || B.oberthema || "", claim: d0.claim || B.claim || "" }, ot = document.getElementById("ot");
     ot.innerHTML = d.oberthema ? `<span class="ot">${H.esc(d.oberthema)}</span>` : `<span class="ot open">Oberthema 2026/27 – wird gerade gefunden</span>`;
     document.getElementById("claim").textContent = d.claim || "";
     compass();
@@ -97,7 +97,8 @@
     const items = th.tiles.filter((t) => !/kombi/.test(t.id));
     const n = items.length, R = 168;
     document.getElementById("ticks").innerHTML = Array.from({ length: 36 }, (_, i) => { const a = i * 10 * Math.PI / 180; const r1 = i % 9 ? 178 : 168; return `<line x1="${200 + Math.sin(a) * r1}" y1="${200 - Math.cos(a) * r1}" x2="${200 + Math.sin(a) * 186}" y2="${200 - Math.cos(a) * 186}" stroke="var(--fg)" stroke-width="${i % 9 ? 1 : 2.5}"/>`; }).join("");
-    const rk = H.ranking(), lead = rk[0] && rk[0].total > 0 && (!rk[1] || rk[1].total < rk[0].total) ? rk[0].tile.id : null;
+    const rk = H.ranking(), B = (D.meta.beschluss || {}).oberthema, fixed = B && items.find((t) => t.titel === (H.st.decisions.oberthema || B));
+    const lead = fixed ? fixed.id : (rk[0] && rk[0].total > 0 && (!rk[1] || rk[1].total < rk[0].total) ? rk[0].tile.id : null);
     document.getElementById("labels").innerHTML = items.map((t, i) => {
       const a = (i / n) * 2 * Math.PI, x = 200 + Math.sin(a) * (R - 52), y = 200 - Math.cos(a) * (R - 52);
       const v = Object.values(H.st.votes[t.id] || {}).reduce((s, b) => s + b, 0);
