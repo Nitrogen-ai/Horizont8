@@ -27,6 +27,8 @@ Alle Inhalte stehen in `assets/data.js` (Cluster → Kacheln). Logik für Notize
 ## Lokale Fassung mit Namen
 Die öffentliche Fassung nennt nur Rollen (Orga 1/2, KL 1/2). Mit `python3 werkzeuge/build_lokal.py` entstehen lokal `Horizont8_mit_Namen*.html` (Werkstatt, Board, Kompass): Daten, CSS und Logik sind eingebettet, die Namen kommen aus `namen.local.json`. Beides ist gitignored.
 
+Slides für Treffen: `python3 werkzeuge/build_slides.py` erzeugt `Horizont8_Slides_mit_Namen.pdf` (20 Folien, 16:9, lokal). Mit `--oeffentlich` entsteht `Horizont8_Slides.pdf` mit Rollen statt Namen.
+
 ## Ordner (iCloud-Arbeitsordner)
 - `00_Quellen/`: Originale (Mails, PDFs, Fotos, Video), **nicht im Repo**
 - `01_Cluster/README.md`: Clusterung mit Quellenzuordnung, Übergabe-Chronik und offenen Widersprüchen
