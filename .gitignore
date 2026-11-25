@@ -1,0 +1,9 @@
+# Originale mit Mailadressen/Telefonnummern/internen Absprachen – nur lokal (iCloud)
+00_Quellen/
+# Exporte aus dem Videocall können Infos zu Lernenden enthalten – nur lokal
+02_Gespraechsergebnisse/*
+!02_Gespraechsergebnisse/.gitkeep
+.DS_Store
+# Fassungen mit Namen – nur lokal
+namen.local.json
+*_mit_Namen*

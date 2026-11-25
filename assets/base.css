@@ -1,0 +1,98 @@
+/* Horizont:8 · gemeinsame Komponenten. Layouts setzen nur die Variablen. */
+:root {
+  --bg: #f6f4ef; --fg: #1c2430; --muted: #5b6573; --card: #fff; --line: #e3e0d8;
+  --accent: #d84315; --chip: #f1eee7; --radius: 14px; --shadow: 0 1px 2px rgba(0,0,0,.06), 0 6px 18px rgba(0,0,0,.06);
+  --c-slate: #607d8b; --c-coral: #e8604c; --c-teal: #00897b; --c-amber: #f0a500; --c-violet: #7e57c2; --c-blue: #3b6fd8; --c-rose: #d81b60;
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 var(--font); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); }
+button, input, select, textarea { font: inherit; color: inherit; }
+img { max-width: 100%; }
+
+/* Kachel-Inhalte */
+.h8-text { margin: .3em 0 .6em; }
+.h8-claim { margin: -.2em 0 .5em; font-weight: 600; color: var(--accent); }
+.h8-bullets { margin: .2em 0 .6em; padding-left: 1.1em; } .h8-bullets li { margin: .15em 0; }
+.h8-chips { display: flex; flex-wrap: wrap; gap: 5px; margin: .4em 0 .7em; }
+.h8-chips span { background: var(--chip); border-radius: 999px; padding: 2px 10px; font-size: .82em; }
+.h8-timeline { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: .3em 0 .6em; font-size: .92em; }
+.h8-timeline dt { font-weight: 700; white-space: nowrap; color: var(--accent); } .h8-timeline dd { margin: 0; }
+.h8-checks { list-style: none; padding: 0; margin: .2em 0 .6em; }
+.h8-checks li { margin: .3em 0; } .h8-checks label { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; }
+.h8-checks input { margin-top: .3em; accent-color: var(--accent); }
+.h8-checks input:checked + span { color: var(--muted); text-decoration: line-through; }
+.h8-deckt, .h8-beispiel { font-size: .88em; margin: .3em 0; color: var(--muted); }
+.h8-procon { display: grid; gap: 4px; margin: .5em 0; font-size: .88em; }
+.h8-procon p { margin: 0; padding: 5px 9px; border-radius: 8px; }
+.h8-procon .pro { background: color-mix(in srgb, #2e7d32 12%, transparent); }
+.h8-procon .contra { background: color-mix(in srgb, #c62828 10%, transparent); }
+.h8-links a { font-weight: 600; text-decoration: none; margin-right: 10px; }
+.h8-badge { display: inline-block; background: var(--accent); color: #fff; border-radius: 6px; font-size: .72em; font-weight: 700; padding: 2px 8px; letter-spacing: .03em; text-transform: uppercase; margin-bottom: .4em; }
+.h8-fig { margin: .4em 0 .6em; } .h8-fig img { width: 100%; border-radius: 10px; cursor: zoom-in; display: block; aspect-ratio: 4/3; object-fit: cover; }
+.h8-fig-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 6px; } .h8-fig-2 img { height: 100%; }
+.h8-video { width: 100%; border-radius: 10px; margin-bottom: .5em; }
+
+/* Notizen */
+.h8-notes { margin-top: .6em; }
+.h8-note-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
+.h8-note { background: var(--nc); color: #1c2430; border-radius: 4px 4px 4px 14px; padding: 7px 9px 5px; min-width: 120px; max-width: 100%; flex: 1 1 140px; box-shadow: 0 2px 6px rgba(0,0,0,.12); font-size: .9em; transform: rotate(-.4deg); }
+.h8-note:nth-child(2n) { transform: rotate(.5deg); }
+.h8-note-text { outline: none; white-space: pre-wrap; word-break: break-word; }
+.h8-note-meta { display: flex; justify-content: space-between; align-items: center; font-size: .72em; opacity: .7; margin-top: 3px; }
+.h8-note-meta button { border: 0; background: none; cursor: pointer; font-size: 1.3em; line-height: 1; padding: 0 2px; opacity: .6; }
+.h8-note-meta button:hover { opacity: 1; }
+.h8-note-form { display: flex; gap: 6px; }
+.h8-note-form textarea { flex: 1; resize: vertical; min-height: 34px; border: 1.5px dashed var(--line); background: transparent; border-radius: 9px; padding: 6px 9px; font-size: .9em; }
+.h8-note-form textarea:focus { outline: none; border-style: solid; border-color: var(--accent); background: var(--card); }
+.h8-note-form button { border: 0; background: var(--accent); color: #fff; border-radius: 9px; width: 34px; cursor: pointer; font-weight: 700; }
+
+/* Punkten */
+.h8-vote { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin: .5em 0; }
+.h8-vote-total { font-size: .85em; color: var(--accent); margin-right: 4px; letter-spacing: 1px; }
+.h8-vote-btn { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--nc); background: transparent; cursor: pointer; font-weight: 800; font-size: .8em; }
+.h8-vote-btn.on { background: var(--nc); color: #1c2430; }
+
+/* Beschlüsse */
+.h8-decisions { display: grid; gap: 10px; }
+.h8-decisions label { display: grid; gap: 3px; font-size: .8em; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.h8-decisions input, .h8-decisions textarea, .h8-decisions select { text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 1.15em; color: var(--fg); border: 1.5px solid var(--line); border-radius: 9px; padding: 7px 10px; background: var(--card); }
+.h8-decisions input[data-k=oberthema] { font-size: 1.5em; font-weight: 800; }
+.h8-todos { display: grid; gap: 5px; }
+.h8-todo-head, .h8-todo { display: grid; grid-template-columns: 1fr 90px 100px 26px; gap: 5px; align-items: center; }
+.h8-todo-head { font-size: .78em; color: var(--muted); }
+.h8-todo-was { display: flex !important; align-items: center; gap: 6px; text-transform: none !important; }
+.h8-todo input, .h8-todo select { font-size: .92em !important; padding: 5px 7px !important; width: 100%; min-width: 0; }
+.h8-todo input[type=checkbox] { width: auto; accent-color: var(--accent); }
+.h8-todo button { border: 0; background: none; cursor: pointer; font-size: 1.2em; color: var(--muted); }
+.h8-mini { border: 1.5px solid var(--line); background: var(--card); border-radius: 8px; padding: 4px 10px; cursor: pointer; font-size: .85em; justify-self: start; }
+.h8-mini:hover { border-color: var(--accent); }
+
+/* Agenda */
+.h8-agenda { display: flex; gap: 6px; flex-wrap: wrap; }
+.h8-ag { position: relative; overflow: hidden; display: flex; align-items: center; gap: 7px; border: 1.5px solid var(--line); background: var(--card); border-radius: 10px; padding: 6px 11px; cursor: pointer; font-size: .85em; }
+.h8-ag-n { font-weight: 800; color: var(--accent); } .h8-ag-m { color: var(--muted); font-variant-numeric: tabular-nums; }
+.h8-ag-bar { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--accent); transition: width .5s; }
+.h8-ag.on { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+.h8-ag.over .h8-ag-m { color: #c62828; font-weight: 700; } .h8-ag.over .h8-ag-bar { background: #c62828; }
+
+/* Werkzeugleiste */
+.h8-toolbar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; font-size: .88em; }
+.h8-me select, .h8-newname { border: 1.5px solid var(--line); border-radius: 8px; padding: 4px 8px; background: var(--card); font-weight: 700; margin-left: 4px; }
+.h8-layouts { display: flex; background: var(--chip); border-radius: 10px; padding: 3px; }
+.h8-layouts a { text-decoration: none; color: var(--fg); padding: 4px 12px; border-radius: 8px; font-weight: 600; }
+.h8-layouts a.on { background: var(--card); box-shadow: var(--shadow); color: var(--accent); }
+.h8-export { display: flex; gap: 5px; }
+.h8-export button, .h8-import { border: 1.5px solid var(--line); background: var(--card); border-radius: 8px; padding: 4px 10px; cursor: pointer; font-weight: 600; }
+.h8-export button:hover, .h8-import:hover { border-color: var(--accent); color: var(--accent); }
+
+.h8-addtile { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.h8-addtile input { flex: 1 1 160px; border: 1.5px dashed var(--line); border-radius: 9px; padding: 6px 9px; background: transparent; font-size: .88em; }
+.h8-addtile button { border: 0; background: var(--fg); color: var(--bg); border-radius: 9px; padding: 6px 12px; cursor: pointer; font-size: .85em; font-weight: 700; }
+
+.h8-lightbox { position: fixed; inset: 0; background: rgba(10,14,20,.88); display: grid; place-items: center; z-index: 9999; cursor: zoom-out; padding: 3vmin; }
+.h8-lightbox img { max-width: 100%; max-height: 94vh; border-radius: 10px; }
+.h8-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 10px 18px; border-radius: 10px; z-index: 9999; box-shadow: var(--shadow); }
+
+@media print { .h8-toolbar, .h8-note-form, .h8-addtile, .h8-agenda { display: none !important; } }

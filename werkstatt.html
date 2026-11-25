@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Horizont:8 · Werkstatt</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  :root { --bg: #12161d; --fg: #e9edf3; --muted: #95a0b0; --card: #1b212b; --line: #2c3544; --chip: #262e3b; --accent: #ff7a59; --shadow: 0 8px 30px rgba(0,0,0,.35); }
+  body { min-height: 100vh; display: grid; grid-template-rows: auto auto 1fr; }
+  header { display: flex; align-items: center; gap: 20px; padding: 14px 22px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .logo { font-weight: 900; font-size: 1.45em; letter-spacing: -.02em; white-space: nowrap; }
+  .logo span { color: var(--accent); } .logo small { display: block; font-size: .5em; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+  header .h8-toolbar { margin-left: auto; }
+  .agbar { padding: 10px 22px; border-bottom: 1px solid var(--line); display: flex; gap: 14px; align-items: center; background: #151a22; }
+  .agbar b { font-size: .75em; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+  main { display: grid; grid-template-columns: 220px 1fr 360px; min-height: 0; }
+  nav.cl { border-right: 1px solid var(--line); padding: 16px 10px; display: flex; flex-direction: column; gap: 4px; position: sticky; top: 0; align-self: start; max-height: 100vh; overflow: auto; }
+  nav.cl button { text-align: left; border: 0; background: transparent; padding: 9px 12px; border-radius: 10px; cursor: pointer; display: grid; grid-template-columns: 26px 1fr auto; gap: 8px; align-items: center; }
+  nav.cl button:hover { background: var(--chip); }
+  nav.cl button.on { background: var(--chip); box-shadow: inset 3px 0 0 var(--cc); }
+  nav.cl .k { width: 26px; height: 26px; border-radius: 8px; background: var(--cc); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: .85em; }
+  nav.cl .n { font-size: .75em; color: var(--muted); }
+  section.stage { padding: 22px 26px 60px; overflow: auto; }
+  .stage h1 { margin: 0; font-size: 2em; letter-spacing: -.02em; display: flex; align-items: center; gap: 12px; }
+  .stage h1 .k { background: var(--cc); color: #fff; border-radius: 10px; width: 42px; height: 42px; display: grid; place-items: center; font-size: .7em; }
+  .stage .sub { color: var(--muted); margin: 4px 0 18px; max-width: 900px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; align-items: start; }
+  .tile { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px 14px; border-top: 4px solid var(--cc); }
+  .tile .kick { font-size: .72em; text-transform: uppercase; letter-spacing: .09em; color: var(--cc); font-weight: 800; }
+  .tile h3 { margin: 2px 0 6px; font-size: 1.2em; }
+  .tile.th h3 { font-size: 1.6em; letter-spacing: -.02em; }
+  .tile.th { border-top-width: 6px; }
+  .tile .h8-claim { color: var(--fg); opacity: .85; }
+  .h8-procon .pro { background: rgba(102,187,106,.13); } .h8-procon .contra { background: rgba(239,83,80,.13); }
+  .addwrap { margin-top: 18px; max-width: 620px; }
+  aside { border-left: 1px solid var(--line); padding: 18px 18px 40px; position: sticky; top: 0; align-self: start; max-height: 100vh; overflow: auto; background: #151a22; }
+  aside h2 { font-size: .78em; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin: 0 0 10px; }
+  .rank { display: grid; gap: 6px; margin-bottom: 24px; }
+  .rank div { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; font-size: .92em; }
+  .rank .bar { grid-column: 1 / -1; height: 6px; background: var(--chip); border-radius: 4px; overflow: hidden; }
+  .rank .bar i { display: block; height: 100%; background: var(--accent); }
+  .h8-decisions input, .h8-decisions textarea, .h8-decisions select { background: var(--card); }
+  @media (max-width: 1100px) { main { grid-template-columns: 1fr; } nav.cl { position: static; flex-direction: row; overflow-x: auto; max-height: none; border-right: 0; border-bottom: 1px solid var(--line); } nav.cl button { grid-template-columns: 26px auto; } nav.cl .n { display: none; } aside { position: static; max-height: none; border-left: 0; border-top: 1px solid var(--line); } }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">HORIZONT<span>:</span>8 <small id="meta"></small></div>
+  <div id="tb"></div>
+</header>
+<div class="agbar"><b>Agenda</b><div id="agenda"></div></div>
+<main>
+  <nav class="cl" id="nav"></nav>
+  <section class="stage" id="stage"></section>
+  <aside>
+    <h2>Meinungsbild Themen</h2><div class="rank" id="rank"></div>
+    <h2>Gesprächsergebnis</h2><div id="dec"></div>
+  </aside>
+</main>
+<script src="assets/data.js"></script>
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  const H = H8, D = H.data;
+  let current = location.hash.slice(1) || sessionStorage.getItem("h8-werkstatt-cluster") || D.clusters[0].id;
+  document.getElementById("meta").textContent = D.meta.untertitel + " · " + D.meta.termin;
+  const css = (c) => `var(--c-${c.farbe})`;
+
+  function drawNav() {
+    const nav = document.getElementById("nav"); nav.innerHTML = "";
+    H.clusters().forEach((c) => {
+      const n = c.tiles.reduce((a, t) => a + (H.st.notes[t.id] || []).length, 0);
+      const b = H.el(`<button style="--cc:${css(c)}" class="${c.id === current ? "on" : ""}"><span class="k">${c.kurz}</span><span>${H.esc(c.titel)}</span><span class="n">${n ? n + " ✎" : ""}</span></button>`);
+      b.addEventListener("click", () => show(c.id)); nav.appendChild(b);
+    });
+  }
+  function drawStage() {
+    const c = H.clusters().find((x) => x.id === current) || H.clusters()[0];
+    const st = document.getElementById("stage"); st.style.setProperty("--cc", css(c));
+    st.innerHTML = `<h1><span class="k">${c.kurz}</span>${H.esc(c.titel)}</h1><p class="sub">${c.sub || ""}</p><div class="grid"></div><div class="addwrap"></div>`;
+    const g = st.querySelector(".grid");
+    c.tiles.forEach((t) => {
+      const tile = H.el(`<article class="tile ${c.voting ? "th" : ""}" style="--cc:${css(c)}"><div class="kick">${H.esc(t.kicker || "")}</div><h3>${H.esc(t.titel)}</h3>${H.tileBody(t)}</article>`);
+      if (c.voting && !/kombi/.test(t.id)) tile.appendChild(H.voteEl(t.id));
+      tile.appendChild(H.notesEl(t.id)); g.appendChild(tile);
+    });
+    st.querySelector(".addwrap").appendChild(H.addTileEl(c.id));
+  }
+  function drawRank() {
+    const r = H.ranking(), max = Math.max(1, ...r.map((x) => x.total));
+    document.getElementById("rank").innerHTML = r.map((x) => `<div><span><b>${H.esc(x.tile.titel)}</b> <small style="color:var(--muted)">${x.by.join(", ")}</small></span><span>${x.total}</span><span class="bar"><i style="width:${(x.total / max) * 100}%"></i></span></div>`).join("");
+  }
+  function show(id) { current = id; sessionStorage.setItem("h8-werkstatt-cluster", id); drawNav(); drawStage(); document.getElementById("stage").scrollTop = 0; window.scrollTo({ top: 0 }); }
+  H.onAgenda = (g) => { if (g.cluster && g.cluster !== "beschluss") show(g.cluster); else document.querySelector("#dec input")?.focus(); };
+  function all() {
+    document.getElementById("tb").replaceChildren(H.toolbarEl("werkstatt.html"));
+    document.getElementById("agenda").replaceChildren(H.agendaEl());
+    document.getElementById("dec").replaceChildren(H.decisionsEl());
+    drawNav(); drawStage(); drawRank();
+  }
+  H.onChange(all); H.onSoft(() => { drawRank(); drawNav(); });
+  all();
+})();
+</script>
+</body>
+</html>

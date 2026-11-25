@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Horizont:8 · Kompass</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  :root { --bg: #f7f3ea; --card: #fffdf8; --line: #e4dccb; --chip: #efe8d8; --accent: #c2410c; --fg: #1f1a14; --muted: #6f6556;
+          --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; }
+  body { background: var(--bg); }
+  .bar { position: sticky; top: 0; z-index: 30; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .bar-in { max-width: 1240px; margin: 0 auto; padding: 10px 28px; display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+  .bar .brand { font-weight: 900; letter-spacing: -.02em; } .bar .brand span { color: var(--accent); }
+  .toc { display: flex; gap: 2px; flex-wrap: wrap; }
+  .toc a { text-decoration: none; color: var(--fg); font-size: .82em; padding: 4px 9px; border-radius: 8px; font-weight: 600; }
+  .toc a:hover { background: var(--chip); } .toc a b { color: var(--cc); margin-right: 3px; }
+  .bar .h8-toolbar { margin-left: auto; }
+  .hero { max-width: 1240px; margin: 0 auto; padding: 70px 28px 40px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center; }
+  .hero h1 { font-size: clamp(3rem, 8vw, 6.5rem); line-height: .9; margin: 0; letter-spacing: -.045em; font-weight: 900; }
+  .hero h1 span { color: var(--accent); }
+  .hero .ot { display: inline-block; margin-top: 18px; border: 2.5px solid var(--accent); color: var(--accent); border-radius: 14px; padding: 6px 18px; font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 700; letter-spacing: .02em; text-transform: uppercase; }
+  .hero .ot.open { border-style: dashed; color: var(--muted); border-color: var(--muted); text-transform: none; font-weight: 500; }
+  .hero .claim { font-family: var(--serif); font-size: 1.45em; font-style: italic; margin: 14px 0 6px; }
+  .hero .meta { color: var(--muted); }
+  .hero .lead { font-family: var(--serif); font-size: 1.15em; line-height: 1.6; max-width: 620px; }
+  #compass { width: 100%; max-width: 420px; justify-self: center; }
+  #compass text { font: 700 11px var(--font); fill: var(--fg); }
+  #needle { transition: transform 1.2s cubic-bezier(.3,1.6,.5,1); transform-origin: 200px 200px; }
+  section.cl { max-width: 1240px; margin: 0 auto; padding: 56px 28px 20px; scroll-margin-top: 60px; }
+  section.cl > header { display: grid; grid-template-columns: auto 1fr; gap: 6px 22px; align-items: end; border-bottom: 3px solid var(--fg); padding-bottom: 14px; margin-bottom: 26px; }
+  section.cl .k { grid-row: span 2; font-family: var(--serif); font-size: 5.5em; line-height: .8; color: var(--cc); font-weight: 700; }
+  section.cl h2 { margin: 0; font-family: var(--serif); font-size: 2.4em; letter-spacing: -.01em; line-height: 1.05; }
+  section.cl .sub { margin: 0; color: var(--muted); }
+  .cols { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 30px 34px; align-items: start; }
+  .tile { position: relative; padding-top: 12px; border-top: 1.5px solid var(--line); }
+  .tile .kick { font-size: .72em; letter-spacing: .12em; text-transform: uppercase; font-weight: 800; color: var(--cc); }
+  .tile h3 { font-family: var(--serif); font-size: 1.5em; margin: 2px 0 6px; line-height: 1.15; }
+  .th .tile { background: var(--card); border: 1px solid var(--line); border-top: 6px solid var(--cc); border-radius: 4px 4px var(--radius) var(--radius); padding: 18px 20px; box-shadow: var(--shadow); }
+  .th .tile h3 { font-family: var(--font); font-weight: 900; font-size: 2.1em; letter-spacing: -.03em; }
+  .tile .h8-text { font-family: var(--serif); font-size: 1.06em; }
+  .add { margin-top: 26px; max-width: 640px; }
+  #ergebnis { max-width: 1240px; margin: 40px auto 80px; padding: 0 28px; }
+  #ergebnis .box { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 28px 32px; box-shadow: var(--shadow); display: grid; grid-template-columns: 1fr 1.3fr; gap: 34px; }
+  #ergebnis h2 { font-family: var(--serif); font-size: 2.2em; margin: 0 0 6px; }
+  footer { text-align: center; color: var(--muted); font-size: .82em; padding: 30px 0 50px; }
+  @media (max-width: 900px) { .hero, #ergebnis .box { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="bar"><div class="bar-in"><span class="brand">HORIZONT<span>:</span>8</span><nav class="toc" id="toc"></nav><div id="tb"></div></div></div>
+
+<div class="hero">
+  <div>
+    <h1>HORIZONT<span>:</span>8</h1>
+    <div id="ot"></div>
+    <p class="claim" id="claim"></p>
+    <p class="meta" id="meta"></p>
+    <p class="lead">Zwei Wochen, eigene Frage, eigenes Produkt: Kleingruppen der Klassen 8.4 und 8.5 lernen hybrid – in der Schule, zu Hause und an außerschulischen Lernorten. Freiheit + Verantwortung = echtes Lernen. Keine Noten.</p>
+  </div>
+  <svg id="compass" viewBox="0 0 400 400" role="img" aria-label="Kompass: die Nadel zeigt auf das Thema mit den meisten Punkten">
+    <circle cx="200" cy="200" r="186" fill="var(--card)" stroke="var(--fg)" stroke-width="3"/>
+    <circle cx="200" cy="200" r="150" fill="none" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="3 6"/>
+    <g id="ticks"></g><g id="labels"></g>
+    <g id="needle"><polygon points="200,58 214,200 200,214 186,200" fill="var(--accent)"/><polygon points="200,342 214,200 200,186 186,200" fill="var(--fg)" opacity=".25"/></g>
+    <circle cx="200" cy="200" r="9" fill="var(--fg)"/>
+  </svg>
+</div>
+
+<main id="main"></main>
+
+<div id="ergebnis">
+  <div class="box">
+    <div><h2>Gesprächsergebnis</h2><p style="color:var(--muted)">Agenda antippen startet die Zeitnahme. Alles bleibt in diesem Browser gespeichert – zum Teilen oben als HTML/PDF exportieren.</p><div id="agenda"></div></div>
+    <div id="dec"></div>
+  </div>
+</div>
+<footer>Rosa-Luxemburg-Gymnasium Berlin · Horizont:8 · Layout „Kompass“ – Baustein für die Kick-off-Tage</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  const H = H8, D = H.data;
+  const css = (c) => `var(--c-${c.farbe})`;
+  document.getElementById("meta").textContent = D.meta.untertitel + " · " + D.meta.termin;
+
+  function hero() {
+    const d = H.st.decisions, ot = document.getElementById("ot");
+    ot.innerHTML = d.oberthema ? `<span class="ot">${H.esc(d.oberthema)}</span>` : `<span class="ot open">Oberthema 2026/27 – wird gerade gefunden</span>`;
+    document.getElementById("claim").textContent = d.claim || "";
+    compass();
+  }
+  function compass() {
+    const th = H.clusters().find((c) => c.voting); if (!th) return;
+    const items = th.tiles.filter((t) => !/kombi/.test(t.id));
+    const n = items.length, R = 168;
+    document.getElementById("ticks").innerHTML = Array.from({ length: 36 }, (_, i) => { const a = i * 10 * Math.PI / 180; const r1 = i % 9 ? 178 : 168; return `<line x1="${200 + Math.sin(a) * r1}" y1="${200 - Math.cos(a) * r1}" x2="${200 + Math.sin(a) * 186}" y2="${200 - Math.cos(a) * 186}" stroke="var(--fg)" stroke-width="${i % 9 ? 1 : 2.5}"/>`; }).join("");
+    const rk = H.ranking(), lead = rk[0] && rk[0].total > 0 && (!rk[1] || rk[1].total < rk[0].total) ? rk[0].tile.id : null;
+    document.getElementById("labels").innerHTML = items.map((t, i) => {
+      const a = (i / n) * 2 * Math.PI, x = 200 + Math.sin(a) * (R - 52), y = 200 - Math.cos(a) * (R - 52);
+      const v = Object.values(H.st.votes[t.id] || {}).reduce((s, b) => s + b, 0);
+      return `<g style="cursor:pointer" data-go="${t.id}"><text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" ${t.id === lead ? 'style="fill:var(--accent);font-size:13px"' : ""}>${H.esc(t.titel)}</text>${v ? `<text x="${x}" y="${y + 14}" text-anchor="middle" style="font-size:10px;fill:var(--accent)">${"●".repeat(v)}</text>` : ""}</g>`;
+    }).join("");
+    const idx = lead ? items.findIndex((t) => t.id === lead) : -1;
+    document.getElementById("needle").style.transform = `rotate(${idx >= 0 ? (idx / n) * 360 : -28}deg)`;
+    document.querySelectorAll("[data-go]").forEach((g) => g.addEventListener("click", () => document.getElementById("t-" + g.dataset.go)?.scrollIntoView({ behavior: "smooth", block: "center" })));
+  }
+  function body() {
+    const main = document.getElementById("main"), toc = document.getElementById("toc");
+    main.innerHTML = ""; toc.innerHTML = "";
+    H.clusters().forEach((c) => {
+      toc.appendChild(H.el(`<a href="#s-${c.id}" style="--cc:${css(c)}"><b>${c.kurz}</b>${H.esc(c.titel.split("·")[0].trim())}</a>`));
+      const s = H.el(`<section class="cl ${c.voting ? "th" : ""}" id="s-${c.id}" style="--cc:${css(c)}"><header><span class="k">${c.kurz}</span><h2>${H.esc(c.titel)}</h2><p class="sub">${c.sub || ""}</p></header><div class="cols"></div><div class="add"></div></section>`);
+      const cols = s.querySelector(".cols");
+      c.tiles.forEach((t) => {
+        const tile = H.el(`<article class="tile" id="t-${t.id}"><div class="kick">${H.esc(t.kicker || "")}</div><h3>${H.esc(t.titel)}</h3>${H.tileBody(t)}</article>`);
+        if (c.voting && !/kombi/.test(t.id)) tile.appendChild(H.voteEl(t.id));
+        tile.appendChild(H.notesEl(t.id)); cols.appendChild(tile);
+      });
+      s.querySelector(".add").appendChild(H.addTileEl(c.id));
+      main.appendChild(s);
+    });
+    toc.appendChild(H.el(`<a href="#ergebnis" style="--cc:var(--accent)"><b>✓</b>Ergebnis</a>`));
+  }
+  H.onAgenda = (g) => { const s = document.getElementById("s-" + g.cluster); (s || document.getElementById("ergebnis")).scrollIntoView({ behavior: "smooth" }); };
+  function all() {
+    document.getElementById("tb").replaceChildren(H.toolbarEl("kompass.html"));
+    document.getElementById("agenda").replaceChildren(H.agendaEl());
+    document.getElementById("dec").replaceChildren(H.decisionsEl());
+    body(); hero();
+  }
+  H.onChange(all); H.onSoft(hero); all();
+})();
+</script>
+</body>
+</html>
